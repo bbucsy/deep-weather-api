@@ -1,0 +1,36 @@
+name: Lint action
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  run-js-linter:
+    name: Run eslint & prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+
+      - name: Run yarn install
+        run: yarn install
+
+      - name: Build
+        run: yarn build:prod
+
+      - name: Lint
+        run: yarn run lint
+
+      - name: Test
+        run: yarn run test
