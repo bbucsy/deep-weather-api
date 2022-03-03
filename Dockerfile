@@ -1,4 +1,4 @@
-FROM node:16.14.0-alpine3.15 AS appbuild
+FROM node:17.6.0-alpine3.15 AS appbuild
 
 WORKDIR /usr/src/app
 
@@ -8,7 +8,7 @@ RUN yarn install && yarn run build:prod
 
 
 
-FROM node:16.14.0-alpine3.15
+FROM node:17.6.0-alpine3.15
 
 ENV NODE_ENV=production
 
