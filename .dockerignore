@@ -1,0 +1,7 @@
+.git
+.cache
+
+*.md
+
+/dist
+/node_modules
