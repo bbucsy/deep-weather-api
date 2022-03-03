@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN yarn install && yarn run build:prod
+RUN yarn install && yarn run build
 
 
 
