@@ -4,8 +4,7 @@
     "group:recommended",
     "group:monorepos",
     "group:definitelyTyped",
-    "helpers:pinGitHubActionDigests",
-    "schedule:daily"
+    "helpers:pinGitHubActionDigests"
   ],
   "prConcurrentLimit": 10,
   "rangeStrategy": "pin",
