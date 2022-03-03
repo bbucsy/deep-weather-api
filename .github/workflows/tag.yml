@@ -1,4 +1,4 @@
-name: Publish Docker versioned image
+name: Publish Docker latest image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'v*.*.*'
 
 jobs:
-  build-and-push-docker-image:
+  build-and-push-docker-image-latest:
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
