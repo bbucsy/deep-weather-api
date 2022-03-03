@@ -19,11 +19,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          - node-version: '14'
-          - cache: 'yarn'
-          - cache-dependency-path: yarn.lock
+          node-version: '14'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
 
-      - name: 'Run yarn install'
+      - name: Run yarn install
         run: yarn install
 
       - name: Build
@@ -31,7 +31,6 @@ jobs:
 
       - name: Lint
         run: yarn run lint
-      
-      -name: Test
+
+      - name: Test
         run: yarn run test
-      
