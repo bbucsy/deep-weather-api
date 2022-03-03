@@ -8,32 +8,30 @@ on:
 jobs:
   build-and-push-docker-image:
     name: Build Docker image and push to repositories
-    # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
 
-    # steps to perform in job
-  steps:
-    - name: Check Out Repo
-      uses: actions/checkout@v2
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Build and push
-      id: docker_build
-      uses: docker/build-push-action@v2
-      with:
-        context: ./
-        file: ./Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.REPOSITORY}}:deep-weather-latest
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.REPOSITORY}}:deep-weather-latest
 
-    - name: Image digest
-      run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
