@@ -19,16 +19,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14"
-          cache: "yarn"
+          node-version: '14'
+          cache: 'yarn'
           cache-dependency-path: yarn.lock
 
-      - name: "Run yarn install"
+      - name: 'Run yarn install'
         run: yarn install
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v1
-        with:
-          eslint: true
-          prettier: true
-          auto_fix: true
+      - name: Build
+        run: yarn build:prod
+
+      - name: Lint
+        run: yarn run lint
+      
+      -name: Test
+        run: yarn run test
+      
