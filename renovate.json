@@ -1,5 +1,28 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    "group:recommended",
+    "group:monorepos",
+    "group:definitelyTyped",
+    "helpers:pinGitHubActionDigests",
+    "schedule:daily"
+  ],
+  "prConcurrentLimit": 10,
+  "rangeStrategy": "pin",
+  "dependencyDashboard": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "matchDatasources": ["npm"],
+      "stabilityDays": 3
+    },
+    {
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    }
   ]
 }
