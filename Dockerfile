@@ -1,6 +1,6 @@
 FROM node:16.14.0-alpine3.15 AS appbuild
 
-WORKDIR /usr/src/app
+WORKDIR /build
 
 COPY . .
 
@@ -12,14 +12,15 @@ FROM node:16.14.0-alpine3.15
 
 ENV NODE_ENV=production
 
-WORKDIR /usr/src/app
+WORKDIR /home/node
 
 COPY --chown=node:node package.json .
 COPY --chown=node:node yarn.lock .
+COPY --chown=node:node ormconfig.js .
 
 RUN yarn install --production 
 
-COPY --from=appbuild --chown=node:node /usr/src/app/dist ./dist
+COPY --from=appbuild --chown=node:node /build/dist ./dist
 
 USER node
 
