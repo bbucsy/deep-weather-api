@@ -20,8 +20,6 @@ COPY --chown=node:node yarn.lock .
 RUN yarn install --production 
 
 COPY --from=appbuild --chown=node:node /usr/src/app/dist ./dist
-COPY --from=appbuild --chown=node:node /usr/src/app/public ./public
-COPY --from=appbuild --chown=node:node /usr/src/app/views ./views
 
 USER node
 
