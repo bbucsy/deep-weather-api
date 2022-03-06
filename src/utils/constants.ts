@@ -1,0 +1,1 @@
+export const OWM_ENV_KEY = 'OPEN_WEATHER_API_KEY';
