@@ -18,11 +18,8 @@ export class OpenWeatherService {
       OWM_ENV_KEY,
     )}&units=metric`;
 
-    console.log(url);
-
     const response = await axios.get<OpenWeatherResponse>(url);
 
-    console.log(response.data);
     return OpenWeatherDto.fromOpenWeatherResponse(response.data);
   }
 }
