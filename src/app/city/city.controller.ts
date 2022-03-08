@@ -3,15 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Render,
+  Redirect,
 } from '@nestjs/common';
 import { City } from './city.entity';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
-import { UpdateCityDto } from './dto/update-city.dto';
 
 @Controller('city')
 export class CityController {
@@ -45,13 +43,15 @@ export class CityController {
     return { city: await this.cityService.findOne(+id) };
   }
 
-  @Patch(':id')
+  /*@Patch(':id')
   async update(@Param('id') id: string, @Body() updateCityDto: UpdateCityDto) {
     return this.cityService.update(+id, updateCityDto);
   }
+*/
 
-  @Delete(':id')
+  @Get(':id/delete')
+  @Redirect('/city')
   async remove(@Param('id') id: string) {
-    return this.cityService.remove(+id);
+    await this.cityService.remove(+id);
   }
 }

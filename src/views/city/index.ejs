@@ -7,6 +7,7 @@
       <th scope="col">Name</th>
       <th scope="col">Lon</th>
       <th scope="col">Lat</th>
+      <th scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -17,6 +18,7 @@
       <td><a href="city/<%= city.id %>"><%= city.name %></td></a>
       <td><%= city.lon %></td>
       <td><%= city.lat %></td>
+      <td><a href="city/<%= city.id%>/delete" class="text-danger"><i class="bi bi-trash3"></i></a></td>
     </tr>
 
     <% }); %>
