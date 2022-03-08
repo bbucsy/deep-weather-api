@@ -1,0 +1,40 @@
+<% if (typeof message !== 'undefined') { %>
+<div class="alert alert-success" role="alert"><%= message %></div>
+
+<% } %>
+
+<form action="/city" method="post">
+  <div class="mb-3">
+    <label for="name" class="form-label">City name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      name="name"
+      value="<%=city.name%>"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="lon" class="form-label">Longitude</label>
+    <input
+      type="text"
+      class="form-control"
+      id="lon"
+      name="lon"
+      value="<%= city.lon %> "
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="lat" class="form-label">Latitude</label>
+    <input
+      type="text"
+      class="form-control"
+      id="lat"
+      name="lat"
+      value="<%= city.lat %> "
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Add city</button>
+</form>
