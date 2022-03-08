@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs-node';
 import { WeatherLabel } from '../open-weather/open-weather.dto';
-import { Prediction } from './prediction.entity';
+import { Prediction } from '../prediction/prediction.entity';
 
 export interface NeuralModelConfiguration {
   epochs: number;

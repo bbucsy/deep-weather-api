@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NeuralModel } from './neural-model.entity';
+import { NeuralModel } from '../neural-model/neural-model.entity';
 import { Prediction } from './prediction.entity';
 
 @Injectable()
