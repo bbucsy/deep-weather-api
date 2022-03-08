@@ -8,6 +8,7 @@ import {
   Delete,
   Render,
 } from '@nestjs/common';
+import { City } from './city.entity';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
@@ -17,8 +18,19 @@ export class CityController {
   constructor(private readonly cityService: CityService) {}
 
   @Post()
+  @Render('city/new')
   async create(@Body() createCityDto: CreateCityDto) {
-    return await this.cityService.create(createCityDto);
+    console.log(createCityDto);
+    return {
+      city: await this.cityService.create(createCityDto),
+      message: 'Created successfully',
+    };
+  }
+
+  @Get('new')
+  @Render('city/new')
+  new() {
+    return { city: new City() };
   }
 
   @Get()
