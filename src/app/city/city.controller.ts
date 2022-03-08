@@ -17,28 +17,29 @@ export class CityController {
   constructor(private readonly cityService: CityService) {}
 
   @Post()
-  create(@Body() createCityDto: CreateCityDto) {
-    return this.cityService.create(createCityDto);
+  async create(@Body() createCityDto: CreateCityDto) {
+    return await this.cityService.create(createCityDto);
   }
 
   @Get()
   @Render('city/index')
-  findAll() {
-    return { cities: this.cityService.findAll() };
+  async findAll() {
+    return { cities: await this.cityService.findAll() };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cityService.findOne(+id);
+  @Render('city/show')
+  async findOne(@Param('id') id: string) {
+    return { city: await this.cityService.findOne(+id) };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCityDto: UpdateCityDto) {
+  async update(@Param('id') id: string, @Body() updateCityDto: UpdateCityDto) {
     return this.cityService.update(+id, updateCityDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.cityService.remove(+id);
   }
 }
