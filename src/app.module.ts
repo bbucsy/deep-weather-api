@@ -5,7 +5,7 @@ import { UserModule } from './app/user/user.module';
 import { OpenWeatherModule } from './app/open-weather/open-weather.module';
 import { ConfigModule } from '@nestjs/config';
 import { PredictionModule } from './app/prediction/prediction.module';
-import { CityModule } from './city/city.module';
+import { CityModule } from './app/city/city.module';
 
 @Module({
   imports: [
