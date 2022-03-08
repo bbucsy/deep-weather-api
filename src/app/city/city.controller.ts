@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Render,
 } from '@nestjs/common';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
@@ -21,8 +22,9 @@ export class CityController {
   }
 
   @Get()
+  @Render('city/index')
   findAll() {
-    return this.cityService.findAll();
+    return { cities: this.cityService.findAll() };
   }
 
   @Get(':id')
