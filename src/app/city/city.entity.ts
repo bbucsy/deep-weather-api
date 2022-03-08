@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateCityDto } from './dto/create-city.dto';
 
 @Entity()
 export class City {
