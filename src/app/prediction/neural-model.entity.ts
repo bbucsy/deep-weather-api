@@ -1,9 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
-export interface NeuralModelConfiguration {
-  epochs: number;
-  hiddenLayerCount: number;
-}
+import { Predictor } from './predictor';
 
 @Entity()
 export class NeuralModel {
@@ -18,4 +14,8 @@ export class NeuralModel {
 
   @Column('int')
   hiddenLayerCount: number;
+
+  getPredictor = (): Predictor => {
+    return new Predictor(this.file_path);
+  };
 }
