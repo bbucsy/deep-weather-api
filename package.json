@@ -30,6 +30,7 @@
     "@nestjs/core": "8.4.0",
     "@nestjs/platform-express": "8.4.0",
     "@nestjs/typeorm": "8.0.3",
+    "@tensorflow/tfjs-node": "^3.14.0",
     "axios": "^0.26.0",
     "ejs": "3.1.6",
     "reflect-metadata": "0.1.13",
