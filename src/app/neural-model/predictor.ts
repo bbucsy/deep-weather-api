@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs-node';
-import { WeatherLabel } from '../open-weather/open-weather.dto';
+import { OpenWeatherDto, WeatherLabel } from '../open-weather/open-weather.dto';
 import { Prediction } from '../prediction/prediction.entity';
 import { NeuralModel } from './neural-model.entity';
 
@@ -69,9 +69,22 @@ export class Predictor {
     await this.model.save(this.modelPath);
   };
 
-  public predict = async (): Promise<Prediction> => {
+  public predict = async (input: OpenWeatherDto[]): Promise<Prediction> => {
+    if (input.length !== Predictor.LAG)
+      throw new Error('Wrong number of inputs for neural network');
+
+    const inputs_raw = input.map((data) => {
+      //TODO normailize data
+      return [data.humidity, data.pressure, data.temp];
+    });
+
+    const input_tensor = tf.tensor(inputs_raw);
+
+    const result_tensor = this.model.predict(input_tensor) as tf.Tensor;
+    const labelIndex = tf.argMax(result_tensor).dataSync()[0];
+
     const result = new Prediction();
-    result.result = WeatherLabel.Clear;
+    result.result = labelIndex;
     return result;
   };
 }
