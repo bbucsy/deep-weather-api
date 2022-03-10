@@ -17,9 +17,9 @@ export class Predictor {
   public static async create(neuralModel: NeuralModel): Promise<Predictor> {
     const object = new Predictor(neuralModel.file_path);
     try {
-      object.loadModel();
+      await object.loadModel();
     } catch (error) {
-      object.createModel({
+      await object.createModel({
         epochs: neuralModel.epochs,
         hiddenLayerCount: neuralModel.hiddenLayerCount,
         lstm_units: neuralModel.lstm_count,
@@ -86,5 +86,18 @@ export class Predictor {
     const result = new Prediction();
     result.result = labelIndex;
     return result;
+  };
+
+  public train = async (tranData: OpenWeatherDto[]) => {
+    tranData[0];
+    //TODO implement train
+  };
+
+  public summary = (): string => {
+    const lines: string[] = [];
+    this.model.summary(undefined, undefined, (message) => {
+      lines.push(message);
+    });
+    return lines.join('\n');
   };
 }

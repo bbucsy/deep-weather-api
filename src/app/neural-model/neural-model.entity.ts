@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  Generated,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { City } from '../city/city.entity';
 import { Predictor } from './predictor';
 
