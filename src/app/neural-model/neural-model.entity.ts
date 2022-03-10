@@ -1,4 +1,11 @@
-import { Column, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Generated,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { City } from '../city/city.entity';
 import { Predictor } from './predictor';
 
 @Entity()
@@ -20,6 +27,9 @@ export class NeuralModel {
 
   @Column({ type: 'boolean', default: false })
   ready: boolean;
+
+  @ManyToOne(() => City, (city) => city.neuralModells)
+  city: City;
 
   getPredictor = async (): Promise<Predictor> => {
     return Predictor.create(this);
