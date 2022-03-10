@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
 import { Predictor } from './predictor';
 
 @Entity()
@@ -15,7 +15,13 @@ export class NeuralModel {
   @Column('int')
   hiddenLayerCount: number;
 
-  getPredictor = (): Predictor => {
-    return new Predictor(this.file_path);
+  @Column('int')
+  lstm_count: number;
+
+  @Column({ type: 'boolean', default: false })
+  ready: boolean;
+
+  getPredictor = async (): Promise<Predictor> => {
+    return Predictor.create(this);
   };
 }
