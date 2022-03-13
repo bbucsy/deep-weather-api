@@ -11,6 +11,12 @@ export class OpenWeatherService {
 
   private api_base = 'http://api.openweathermap.org/data/2.5';
 
+  /**
+   * Returns the current *non normalized* weather data of given location
+   * @param lat latitude
+   * @param lon longitude
+   * @returns Simplified DTO of current weather data
+   */
   async currentWeather(lat: string, lon: string): Promise<OpenWeatherDto> {
     const url = `${
       this.api_base

@@ -8,6 +8,8 @@ export class AppController {
   @Get()
   @Render('index')
   async getHello() {
-    return { message: await this.weatherApi.currentWeather('35', '139') };
+    return {
+      message: await this.weatherApi.currentWeather('47.4979', '19.0402'),
+    };
   }
 }
