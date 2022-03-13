@@ -27,13 +27,13 @@ export class NeuralModelService {
     });
 
     await this.modelRepository.save(model);
-    const predictor = await model.getPredictor();
-
-    await predictor.train([]);
-
-    model.ready = true;
-    this.modelRepository.save(model);
+    await model.getPredictor();
 
     return model;
+  }
+
+  async trainModelFromAPI(id: number) {
+    const model = await this.modelRepository.findOneOrFail(id);
+    const nn = model.getPredictor();
   }
 }
