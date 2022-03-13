@@ -13,7 +13,7 @@ export class PredictionService {
 
   async predictWeather(): Promise<Prediction> {
     const model = await this.modelRepository.findOne();
-
-    return await model.getPredictor().predict();
+    const predictor = await model.getPredictor();
+    return predictor.predict([]);
   }
 }
