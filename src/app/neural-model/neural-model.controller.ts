@@ -9,19 +9,19 @@ export class NeuralModelController {
     private readonly cityService: CityService,
   ) {}
 
-  @Get()
+  @Get('new')
   async createModel() {
     const city = await this.cityService.findAll();
 
     const model = await this.modelService.createModell(city[0], {
       epochs: 6,
-      hiddenLayerCount: 10,
+      hiddenLayerCount: 3,
       lstm_units: 5,
     });
 
-    console.log(model);
+    (await model.getPredictor()).summary(false);
 
-    const pred = await model.getPredictor();
-    return pred.summary();
+    const info = await this.modelService.pretrainModel(model);
+    return info
   }
 }
