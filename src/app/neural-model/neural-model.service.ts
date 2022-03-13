@@ -7,6 +7,7 @@ import { NeuralModelConfiguration, Predictor } from './predictor';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import { OpenWeatherDto } from '../open-weather/open-weather.dto';
+import { join } from 'path';
 
 @Injectable()
 export class NeuralModelService {
@@ -38,12 +39,12 @@ export class NeuralModelService {
     return this.modelRepository.findOne(id);
   }
 
-  async pretrainModel(model: NeuralModel): Promise<string> {
+  async pretrainModel(model: NeuralModel): Promise<number[]> {
     const predictor = await model.getPredictor();
 
     //load train data
     const data = JSON.parse(
-      fs.readFileSync('training_data.json', 'utf-8'),
+      fs.readFileSync(join(__dirname, 'training_data.json'), 'utf-8'),
     ) as Array<OpenWeatherDto>;
     const prepared: OpenWeatherDto[][] = [];
     for (let i = Predictor.LAG; i < data.length; i++) {
@@ -54,6 +55,7 @@ export class NeuralModelService {
 
     model.ready = true;
     await this.modelRepository.save(model);
-    return info.history.acc.toString();
+
+    return info.history.acc as unknown as number[];
   }
 }

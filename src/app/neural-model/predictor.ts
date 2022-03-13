@@ -74,18 +74,17 @@ export class Predictor {
     await this.model.save(this.modelPath);
   };
 
-  private convertDtoToTensor = (input: OpenWeatherDto[]): tf.Tensor => {
+  private convertDtoToNumberArray = (input: OpenWeatherDto[]): number[][] => {
     if (input.length !== Predictor.LAG)
       throw new Error('Wrong number of inputs for neural network');
-    return tf.tensor(
-      input
-        .map(normalizeWeather)
-        .map((dto) => [dto.humidity, dto.pressure, dto.temp]),
-    );
+
+    return input
+      .map(normalizeWeather)
+      .map((dto) => [dto.humidity, dto.pressure, dto.temp]);
   };
 
   public predict = async (input: OpenWeatherDto[]): Promise<Prediction> => {
-    const input_tensor = this.convertDtoToTensor(input);
+    const input_tensor = tf.tensor(this.convertDtoToNumberArray(input)[0]);
     const result_tensor = this.model.predict(input_tensor) as tf.Tensor;
     const labelIndex = tf.argMax(result_tensor).dataSync()[0];
     const result = new Prediction();
@@ -94,11 +93,16 @@ export class Predictor {
   };
 
   public train = async (trainData: OpenWeatherDto[][]): Promise<tf.History> => {
-    const xs = trainData
-      .map((td) => td.slice(0, Predictor.LAG))
-      .map(this.convertDtoToTensor);
-    const ys = trainData.map((td) =>
-      tf.oneHot(td[Predictor.LAG].weather, Predictor.LABEL_COUNT),
+    const xs = tf.tensor(
+      trainData
+        .map((td) => td.slice(0, Predictor.LAG))
+        .map(this.convertDtoToNumberArray),
+    );
+
+    const ys = tf.tensor(
+      trainData.map((td) =>
+        tf.oneHot(td[Predictor.LAG].weather, Predictor.LABEL_COUNT).dataSync(),
+      ),
     );
 
     const info = await this.model.fit(xs, ys, {

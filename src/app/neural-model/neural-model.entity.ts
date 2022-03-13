@@ -25,11 +25,10 @@ export class NeuralModel {
   @ManyToOne(() => City, (city) => city.neuralModells)
   city: City;
 
-
   private predictor_instance?: Predictor = null;
 
   getPredictor = async (): Promise<Predictor> => {
-    if (this.predictor_instance == null){
+    if (this.predictor_instance == null) {
       this.predictor_instance = await Predictor.create(this);
     }
     return this.predictor_instance;

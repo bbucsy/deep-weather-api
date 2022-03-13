@@ -14,14 +14,12 @@ export class NeuralModelController {
     const city = await this.cityService.findAll();
 
     const model = await this.modelService.createModell(city[0], {
-      epochs: 6,
-      hiddenLayerCount: 3,
-      lstm_units: 5,
+      epochs: 5,
+      hiddenLayerCount: 5,
+      lstm_units: 16,
     });
 
-    (await model.getPredictor()).summary(false);
-
     const info = await this.modelService.pretrainModel(model);
-    return info
+    return info;
   }
 }
