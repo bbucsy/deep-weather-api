@@ -110,6 +110,7 @@ export class Predictor {
       validationSplit: 0.3,
       shuffle: true,
       batchSize: 32,
+      verbose: 0,
     });
 
     this.model.save(this.modelPath);

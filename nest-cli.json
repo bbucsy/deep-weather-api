@@ -5,7 +5,7 @@
     "spec": false
   },
   "compilerOptions": {
-    "assets": ["views/**/*.*", "public/*.*"],
+    "assets": ["views/**/*.*", "public/*.*", "**/*.json"],
     "watchAssets": true
   }
 }

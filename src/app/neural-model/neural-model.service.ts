@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { City } from '../city/city.entity';
@@ -15,6 +15,8 @@ export class NeuralModelService {
     @InjectRepository(NeuralModel)
     private readonly modelRepository: Repository<NeuralModel>,
   ) {}
+
+  private readonly logger = new Logger(NeuralModelService.name);
 
   async createModell(
     city: City,
@@ -40,8 +42,9 @@ export class NeuralModelService {
   }
 
   async pretrainModel(model: NeuralModel): Promise<number[]> {
+    this.logger.debug('Pretrain function called');
     const predictor = await model.getPredictor();
-
+    this.logger.debug('Got Predictor object');
     //load train data
     const data = JSON.parse(
       fs.readFileSync(join(__dirname, 'training_data.json'), 'utf-8'),
@@ -50,7 +53,7 @@ export class NeuralModelService {
     for (let i = Predictor.LAG; i < data.length; i++) {
       prepared.push(data.slice(i - Predictor.LAG, i + 1));
     }
-
+    this.logger.debug('Pretrain data loaded');
     const info = await predictor.train(prepared);
 
     model.ready = true;
