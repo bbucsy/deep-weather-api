@@ -943,7 +943,7 @@
     "@types/connect" "*"
     "@types/node" "*"
 
-"@types/bull@^3.15.8":
+"@types/bull@3.15.8":
   version "3.15.8"
   resolved "https://registry.yarnpkg.com/@types/bull/-/bull-3.15.8.tgz#ae2139f94490d740b37c8da5d828ce75dd82ce7c"
   integrity sha512-8DbSPMSsZH5PWPnGEkAZLYgJEH4ghHJNKF7LB6Wr5R0/v6g+Vs+JoaA7kcvLtHE936xg2WpFPkaoaJgExOmKDw==
