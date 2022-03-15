@@ -10,6 +10,9 @@ export class NeuralModel {
   @Column({ unique: true })
   file_path: string;
 
+  @Column()
+  name: string;
+
   @Column('int')
   epochs: number;
 
@@ -19,8 +22,12 @@ export class NeuralModel {
   @Column('int')
   lstm_count: number;
 
-  @Column({ type: 'boolean', default: false })
-  ready: boolean;
+  @Column({ type: 'float', default: 0.0 })
+  accuracy: number;
+
+  // 0-> created 1-> trained 2+-> error
+  @Column({ type: 'int', default: 0 })
+  status: number;
 
   @ManyToOne(() => City, (city) => city.neuralModells)
   city: City;

@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { City } from '../city/city.entity';
 import { NeuralModel } from '../neural-model/neural-model.entity';
-import { NeuralModelConfiguration, Predictor } from './predictor';
+import { Predictor } from './predictor';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import { OpenWeatherDto } from '../open-weather/open-weather.dto';
@@ -18,27 +18,26 @@ export class NeuralModelService {
 
   private readonly logger = new Logger(NeuralModelService.name);
 
-  async createModell(
-    city: City,
-    config: NeuralModelConfiguration,
-  ): Promise<NeuralModel> {
+  async createModell(city: City, dto: CreateModelDto): Promise<NeuralModel> {
     const file_path = `file://models/${uuidv4()}`;
     const model = this.modelRepository.create({
       city: city,
-      epochs: config.epochs,
       file_path: file_path,
-      hiddenLayerCount: config.hiddenLayerCount,
-      lstm_count: config.lstm_units,
+      epochs: dto.epochs,
+      hiddenLayerCount: dto.hiddenLayerCount,
+      lstm_count: dto.lstm_count,
+      name: dto.name,
     });
 
     await this.modelRepository.save(model);
-    await model.getPredictor();
-
     return model;
   }
 
-  async find(id: number): Promise<NeuralModel> {
-    return this.modelRepository.findOne(id);
+  async findOne(id: number, withCity = false): Promise<NeuralModel> {
+    const load: FindOneOptions<NeuralModel> = withCity
+      ? { relations: ['city'] }
+      : {};
+    return this.modelRepository.findOne(id, load);
   }
 
   async pretrainModel(model: NeuralModel): Promise<number[]> {
@@ -56,9 +55,21 @@ export class NeuralModelService {
     this.logger.debug('Pretrain data loaded');
     const info = await predictor.train(prepared);
 
-    model.ready = true;
+    model.status = 1;
     await this.modelRepository.save(model);
 
     return info.history.acc as unknown as number[];
+  }
+
+  async setErrorState(id: number) {
+    const model = await this.modelRepository.findOneOrFail(id);
+    model.status = 2;
+    this.modelRepository.save(model);
+  }
+
+  async setAccuracy(id: number, acc: number) {
+    const model = await this.modelRepository.findOneOrFail(id);
+    model.accuracy = acc;
+    this.modelRepository.save(model);
   }
 }

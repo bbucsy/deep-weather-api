@@ -1,0 +1,37 @@
+<div class="row mt-5">
+  <div class="col-12">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">
+          <%= neuralModel.name %> (<%= neuralModel.city.name %> )
+        </h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <strong>Status:</strong>
+            <%- helpers.renderStatusBar(neuralModel.status) %>
+          </li>
+          <li class="list-group-item">
+            <strong>Initial training epochs:</strong> <%= neuralModel.epochs %>
+          </li>
+          <li class="list-group-item">
+            <strong>Hidden layer count:</strong> <%=
+            neuralModel.hiddenLayerCount %>
+          </li>
+          <li class="list-group-item">
+            <strong>LSTM unit count:</strong> <%= neuralModel.lstm_count %>
+          </li>
+          <li class="list-group-item">
+            <strong>Accuracy</strong> <%= (neuralModel.accuracy *
+            100).toFixed(2) %>%
+          </li>
+          <li class="list-group-item"><strong>Retrains:</strong> TBA</li>
+        </ul>
+      </div>
+      <div class="card-body">
+        <a href="/city/<%= neuralModel.city.id %> " class="btn btn-primary"
+          >Back to city</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

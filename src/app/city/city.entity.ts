@@ -15,6 +15,8 @@ export class City {
   @Column()
   lat: number;
 
-  @OneToMany(() => NeuralModel, (neuralModel) => neuralModel.city)
+  @OneToMany(() => NeuralModel, (neuralModel) => neuralModel.city, {
+    eager: true,
+  })
   neuralModells: NeuralModel[];
 }
