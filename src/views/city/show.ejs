@@ -1,2 +1,13 @@
-<p><strong>Name:</strong> <%= city.name %></p>
-<p><strong>Coords:</strong> <%= city.lon %>, <%= city.lat %></p>
+<div class="row mt-5">
+  <div class="col-12">
+    <p><strong>Name:</strong> <%= city.name %></p>
+    <p><strong>Coords:</strong> <%= city.lon %>, <%= city.lat %></p>
+  </div>
+</div>
+<div class="row mt-5">
+  <div class="col-3">
+    <a href="/neural-model/new?city=<%= city.id %> " class="btn btn-primary"
+      >Create neural model</a
+    >
+  </div>
+</div>

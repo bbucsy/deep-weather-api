@@ -21,6 +21,7 @@ import { BullModule } from '@nestjs/bull';
       redis: {
         host: 'localhost',
         port: 6379,
+        connectTimeout: 5,
       },
     }),
     CityModule,
