@@ -19,8 +19,9 @@ export class NeuralModel {
   @Column('int')
   lstm_count: number;
 
-  @Column({ type: 'boolean', default: false })
-  ready: boolean;
+  // 0-> created 1-> trained 2+-> error
+  @Column({ type: 'int', default: 0 })
+  status: number;
 
   @ManyToOne(() => City, (city) => city.neuralModells)
   city: City;

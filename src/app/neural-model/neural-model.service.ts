@@ -56,7 +56,7 @@ export class NeuralModelService {
     this.logger.debug('Pretrain data loaded');
     const info = await predictor.train(prepared);
 
-    model.ready = true;
+    model.status = 1;
     await this.modelRepository.save(model);
 
     return info.history.acc as unknown as number[];
