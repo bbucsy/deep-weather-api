@@ -10,6 +10,9 @@ export class NeuralModel {
   @Column({ unique: true })
   file_path: string;
 
+  @Column()
+  name: string;
+
   @Column('int')
   epochs: number;
 
