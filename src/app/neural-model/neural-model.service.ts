@@ -66,4 +66,10 @@ export class NeuralModelService {
     model.status = 2;
     this.modelRepository.save(model);
   }
+
+  async setAccuracy(id: number, acc: number) {
+    const model = await this.modelRepository.findOneOrFail(id);
+    model.accuracy = acc;
+    this.modelRepository.save(model);
+  }
 }

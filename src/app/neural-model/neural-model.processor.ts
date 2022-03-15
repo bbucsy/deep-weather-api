@@ -16,7 +16,8 @@ export class NeuralModelProcessor {
     this.logger.debug(`modelId: ${job.data.modelId}`);
     const modelId = job.data.modelId as number;
     const model = await this.modelService.findOne(modelId);
-    await this.modelService.pretrainModel(model);
+    const info = await this.modelService.pretrainModel(model);
+    this.modelService.setAccuracy(modelId, info[info.length - 1]);
     this.logger.log('Model training done');
   }
 
