@@ -1,13 +1,33 @@
-<div class="row mt-5">
-  <div class="col-12">
-    <p><strong>Name:</strong> <%= city.name %></p>
-    <p><strong>Coords:</strong> <%= city.lon %>, <%= city.lat %></p>
-  </div>
-</div>
-<div class="row mt-5">
-  <div class="col-3">
-    <a href="/neural-model/new?city=<%= city.id %> " class="btn btn-primary"
-      >Create neural model</a
-    >
+
+<div class="card mt-5">
+  <div class="card-header"><%= city.name %> </div>
+  <div class="card-body">
+    <p class="card-text">
+      <strong>Coordinates: </strong> <%= helpers.renderCoordinates(city.lat, city.lon) %>, 
+    </p>
+    <p class="card-text">
+      <strong>Connected models: </strong>
+      <table class="table">
+        <thead> 
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Accuracy</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% city.neuralModells.forEach(model => { %>
+          <tr>
+            <td><a href="/neural-model/<%= model.id %> "><%= model.name %></a></td>
+            <td><%= model.accuracy.toFixed(2)%>% </td>
+            <td><%- helpers.renderStatusBar(model.status) %> </td>
+          </tr>
+          <%  }); %>
+         
+        </tbody>
+      </table>
+    </p>
+    <a href="/city" class="btn btn-secondary">Back to cities</a>
+    <a href="/neural-model/new?city=<%= city.id %> " class="btn btn-primary">Create neural model</a>
   </div>
 </div>

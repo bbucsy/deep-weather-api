@@ -9,4 +9,16 @@ export const helpers = {
         return '<span class="badge bg-danger">Error during training</span>';
     }
   },
+
+  renderCoordinates: (lat: string | number, lon: string | number): string => {
+    const longitude = typeof lon == 'string' ? Number.parseInt(lon) : lon;
+    const latitude = typeof lat == 'string' ? Number.parseInt(lat) : lat;
+
+    const lat_label = lat > 0 ? 'N' : 'S';
+    const lon_label = lon > 0 ? 'E' : 'W';
+
+    return `${latitude.toFixed(4)}° ${lat_label}, ${longitude.toFixed(
+      4,
+    )}° ${lon_label}`;
+  },
 };

@@ -21,10 +21,16 @@
             <strong>LSTM unit count:</strong> <%= neuralModel.lstm_count %>
           </li>
           <li class="list-group-item">
-            <strong>Accuracy</strong> <%= neuralModel.accuracy * 100 %>%
+            <strong>Accuracy</strong> <%= (neuralModel.accuracy *
+            100).toFixed(2) %>%
           </li>
           <li class="list-group-item"><strong>Retrains:</strong> TBA</li>
         </ul>
+      </div>
+      <div class="card-body">
+        <a href="/city/<%= neuralModel.city.id %> " class="btn btn-primary"
+          >Back to city</a
+        >
       </div>
     </div>
   </div>
