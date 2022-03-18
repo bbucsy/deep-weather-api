@@ -1,4 +1,4 @@
-FROM node:16.14.1-alpine3.15 AS appbuild
+FROM node:16.14.2-alpine3.15 AS appbuild
 
 WORKDIR /build
 
@@ -8,7 +8,7 @@ RUN yarn install && yarn run build
 
 
 
-FROM node:16.14.1-alpine3.15
+FROM node:16.14.2-alpine3.15
 
 ENV NODE_ENV=production
 RUN apk add --no-cache tini
