@@ -1,10 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { NeuralModel } from '../neural-model/neural-model.entity';
 
 @Entity()
 export class Prediction {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  input: string;
   //todo: openWeatherDTO
 
   /*@Column({
@@ -15,4 +18,7 @@ export class Prediction {
   result: WeatherLabel;*/
   @Column()
   result: number;
+
+  @ManyToOne(() => NeuralModel, (model) => model.predictions)
+  model: NeuralModel;
 }
