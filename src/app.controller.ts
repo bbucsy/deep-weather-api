@@ -9,7 +9,18 @@ export class AppController {
   @Render('index')
   async getHello() {
     return {
-      message: await this.weatherApi.currentWeather('47.4979', '19.0402'),
+      //message: await this.weatherApi.currentWeather('47.4979', '19.0402'),
+      message: (
+        await this.weatherApi.getHistoricalHorlyData(
+          '47.4979',
+          '19.0402',
+          26,
+          1647914400,
+        )
+      ).map((h) => {
+        const d = new Date(h.utc_date * 1000);
+        return { temp: h.temp, date: d.toLocaleString() };
+      }),
     };
   }
 }

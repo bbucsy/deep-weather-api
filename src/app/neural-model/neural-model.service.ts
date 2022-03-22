@@ -6,8 +6,9 @@ import { NeuralModel } from '../neural-model/neural-model.entity';
 import { Predictor } from './predictor';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
-import { OpenWeatherDto } from '../open-weather/open-weather.dto';
+import { OpenWeatherDto } from '../open-weather/dto/open-weather.dto';
 import { join } from 'path';
+import { Prediction } from '../prediction/prediction.entity';
 
 @Injectable()
 export class NeuralModelService {
@@ -38,6 +39,14 @@ export class NeuralModelService {
       ? { relations: ['city'] }
       : {};
     return this.modelRepository.findOne(id, load);
+  }
+
+  async findByStatus(status: number): Promise<NeuralModel[]> {
+    return await this.modelRepository.find({ where: { status: status } });
+  }
+
+  async makePrediction(model: NeuralModel): Promise<Prediction> {
+    return new Prediction();
   }
 
   async pretrainModel(model: NeuralModel): Promise<number[]> {

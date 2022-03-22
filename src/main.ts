@@ -3,7 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import * as expressLayouts from 'express-ejs-layouts';
-import { WeatherLabel } from './app/open-weather/open-weather.dto';
+import { WeatherLabel } from './app/open-weather/dto/open-weather.dto';
 import { Request, Response, NextFunction } from 'express';
 import { helpers } from './app.view-helpres';
 

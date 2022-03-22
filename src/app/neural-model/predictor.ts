@@ -1,6 +1,9 @@
 import * as tf from '@tensorflow/tfjs-node';
 import { normalizeWeather } from 'src/utils/normalization';
-import { OpenWeatherDto, WeatherLabel } from '../open-weather/open-weather.dto';
+import {
+  OpenWeatherDto,
+  WeatherLabel,
+} from '../open-weather/dto/open-weather.dto';
 import { Prediction } from '../prediction/prediction.entity';
 import { NeuralModel } from './neural-model.entity';
 

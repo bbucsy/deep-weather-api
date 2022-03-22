@@ -21,6 +21,12 @@ export class NeuralModelProcessor {
     this.logger.log('Model training done');
   }
 
+  @Process('predict')
+  async handlePredict(job: Job) {
+    this.logger.log('Start predicting weather');
+    const models = this.modelService.findByStatus(1);
+  }
+
   @OnQueueFailed()
   async handler(job: Job, err: Error) {
     this.logger.error('job failed');
