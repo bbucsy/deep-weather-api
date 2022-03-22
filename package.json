@@ -25,7 +25,7 @@
     "migration:generate": "yarn build && typeorm migration:generate -d src/migrations -n "
   },
   "dependencies": {
-    "@nestjs/bull": "0.5.3",
+    "@nestjs/bull": "0.5.4",
     "@nestjs/common": "8.4.1",
     "@nestjs/config": "1.2.1",
     "@nestjs/core": "8.4.1",
