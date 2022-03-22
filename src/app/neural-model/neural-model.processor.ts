@@ -2,6 +2,7 @@ import { OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { Prediction } from '../prediction/prediction.entity';
+import { PredictionService } from '../prediction/prediction.service';
 
 import { NeuralModelService } from './neural-model.service';
 
@@ -9,7 +10,10 @@ import { NeuralModelService } from './neural-model.service';
 export class NeuralModelProcessor {
   private readonly logger = new Logger(NeuralModelProcessor.name);
 
-  constructor(private readonly modelService: NeuralModelService) {}
+  constructor(
+    private readonly modelService: NeuralModelService,
+    private readonly predictionService: PredictionService,
+  ) {}
 
   @Process('pretrain')
   async handlePretrain(job: Job) {
@@ -29,7 +33,7 @@ export class NeuralModelProcessor {
     const models = this.modelService.findByStatus(1);
     const predictionFunctions: Promise<Prediction>[] = (await models).map(
       (model) => {
-        return this.modelService.makePrediction(model);
+        return this.predictionService.predictWeather(model.id);
       },
     );
     await Promise.all(predictionFunctions);

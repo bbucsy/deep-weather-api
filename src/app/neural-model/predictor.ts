@@ -4,7 +4,7 @@ import {
   OpenWeatherDto,
   WeatherLabel,
 } from '../open-weather/dto/open-weather.dto';
-import { Prediction } from '../prediction/prediction.entity';
+
 import { NeuralModel } from './neural-model.entity';
 
 export interface NeuralModelConfiguration {
@@ -86,13 +86,11 @@ export class Predictor {
       .map((dto) => [dto.humidity, dto.pressure, dto.temp]);
   };
 
-  public predict = async (input: OpenWeatherDto[]): Promise<Prediction> => {
+  public predict = async (input: OpenWeatherDto[]): Promise<number> => {
     const input_tensor = tf.tensor([this.convertDtoToNumberArray(input)]);
     const result_tensor = this.model.predict(input_tensor) as tf.Tensor;
     const labelIndex = tf.argMax(result_tensor).dataSync()[0];
-    const result = new Prediction();
-    result.result = labelIndex;
-    return result;
+    return labelIndex;
   };
 
   public train = async (trainData: OpenWeatherDto[][]): Promise<tf.History> => {
