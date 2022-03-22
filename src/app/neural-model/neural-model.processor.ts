@@ -1,6 +1,7 @@
 import { OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
+import { Prediction } from '../prediction/prediction.entity';
 
 import { NeuralModelService } from './neural-model.service';
 
@@ -22,9 +23,17 @@ export class NeuralModelProcessor {
   }
 
   @Process('predict')
-  async handlePredict(job: Job) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async handlePredict(_job: Job) {
     this.logger.log('Start predicting weather');
     const models = this.modelService.findByStatus(1);
+    const predictionFunctions: Promise<Prediction>[] = (await models).map(
+      (model) => {
+        return this.modelService.makePrediction(model);
+      },
+    );
+    await Promise.all(predictionFunctions);
+    this.logger.log('Prediction cycle ended');
   }
 
   @OnQueueFailed()

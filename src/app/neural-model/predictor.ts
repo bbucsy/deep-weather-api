@@ -87,7 +87,7 @@ export class Predictor {
   };
 
   public predict = async (input: OpenWeatherDto[]): Promise<Prediction> => {
-    const input_tensor = tf.tensor(this.convertDtoToNumberArray(input)[0]);
+    const input_tensor = tf.tensor([this.convertDtoToNumberArray(input)]);
     const result_tensor = this.model.predict(input_tensor) as tf.Tensor;
     const labelIndex = tf.argMax(result_tensor).dataSync()[0];
     const result = new Prediction();

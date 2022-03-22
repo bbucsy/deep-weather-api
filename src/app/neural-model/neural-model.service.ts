@@ -9,12 +9,14 @@ import * as fs from 'fs';
 import { OpenWeatherDto } from '../open-weather/dto/open-weather.dto';
 import { join } from 'path';
 import { Prediction } from '../prediction/prediction.entity';
+import { OpenWeatherService } from '../open-weather/open-weather.service';
 
 @Injectable()
 export class NeuralModelService {
   constructor(
     @InjectRepository(NeuralModel)
     private readonly modelRepository: Repository<NeuralModel>,
+    private readonly weatherService: OpenWeatherService,
   ) {}
 
   private readonly logger = new Logger(NeuralModelService.name);
@@ -42,11 +44,20 @@ export class NeuralModelService {
   }
 
   async findByStatus(status: number): Promise<NeuralModel[]> {
-    return await this.modelRepository.find({ where: { status: status } });
+    return await this.modelRepository.find({
+      where: { status: status },
+      relations: ['city'],
+    });
   }
 
   async makePrediction(model: NeuralModel): Promise<Prediction> {
-    return new Prediction();
+    const predictor = await model.getPredictor();
+    const data = await this.weatherService.getHistoricalHorlyData(
+      model.city.lat.toString(),
+      model.city.lon.toString(),
+      Predictor.LAG,
+    );
+    return predictor.predict(data);
   }
 
   async pretrainModel(model: NeuralModel): Promise<number[]> {

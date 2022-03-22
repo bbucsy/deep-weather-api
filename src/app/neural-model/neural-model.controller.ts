@@ -53,6 +53,12 @@ export class NeuralModelController {
     return { neuralModel: model, cities: cities };
   }
 
+  @Get('predict')
+  async predict(@Res() res: Response) {
+    await this.neuralQueue.add('predict');
+    return res.redirect(`/city`);
+  }
+
   @Get(':id')
   @Render('neural-model/show')
   async findOne(@Param('id') id: string) {
