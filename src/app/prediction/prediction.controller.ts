@@ -31,6 +31,21 @@ export class PredictionController {
     };
   }
 
+  @Get('responses')
+  @Render('predictions/responses')
+  async responses() {
+    const responses = await this.predictionService.findAllResponsesWithModels();
+    return {
+      responses: responses.map((r) => {
+        return {
+          model: r.prediction.model.name,
+          predicted: r.prediction.result,
+          actual: r.response,
+        };
+      }),
+    };
+  }
+
   @Get('response/:id/wrong')
   @Render('predictions/wrong')
   async wrongResult(@Param('id') id: number) {

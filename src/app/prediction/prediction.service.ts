@@ -32,6 +32,12 @@ export class PredictionService {
     return this.predictionRepository.save(prediction);
   }
 
+  async findAllResponsesWithModels() {
+    return this.responseRepository.find({
+      relations: ['prediction', 'prediction.model'],
+    });
+  }
+
   async findByCity(city_id: number): Promise<Prediction[]> {
     return this.predictionRepository.find({
       relations: ['model', 'model.city'],

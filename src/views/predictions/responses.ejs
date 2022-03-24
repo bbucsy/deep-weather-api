@@ -1,0 +1,23 @@
+<h1>Response log</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Timestamp</th>
+      <th scope="col">Model</th>
+      <th scope="col">Predicted code</th>
+      <th scope="col">Response code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% responses.forEach(response => { %>
+    <tr>
+      <th scope="row">response.dt</th>
+      <td><%= response.model %></td>
+      <td><%= response.predicted%></td>
+      <td><%= response.actual %></td>
+    </tr>
+
+    <% }); %>
+  </tbody>
+</table>
