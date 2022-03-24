@@ -1,19 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NeuralModel } from '../neural-model/neural-model.entity';
 import { Prediction } from './prediction.entity';
+import { CreatePredictionDto } from './dto/create-prediction.dto';
 
 @Injectable()
 export class PredictionService {
   constructor(
-    @InjectRepository(NeuralModel)
-    private readonly modelRepository: Repository<NeuralModel>,
+    @InjectRepository(Prediction)
+    private readonly predictionRepository: Repository<Prediction>,
   ) {}
 
-  async predictWeather(): Promise<Prediction> {
-    const model = await this.modelRepository.findOne();
-    const predictor = await model.getPredictor();
-    return predictor.predict([]);
+  async findAllPredictions(): Promise<Prediction[]> {
+    return this.predictionRepository.find();
+  }
+
+  async create(createDto: CreatePredictionDto): Promise<Prediction> {
+    const prediction = this.predictionRepository.create({
+      input: JSON.stringify(createDto.input),
+      model: createDto.model,
+      result: createDto.result,
+    });
+    return this.predictionRepository.save(prediction);
+  }
+
+  async findByCity(city_id: number): Promise<Prediction[]> {
+    return this.predictionRepository.find({
+      relations: ['model', 'model.city'],
+      where: { model: { city: city_id } },
+    });
   }
 }

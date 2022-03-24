@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { City } from '../city/city.entity';
+import { Prediction } from '../prediction/prediction.entity';
 import { Predictor } from './predictor';
 
 @Entity()
@@ -31,6 +38,9 @@ export class NeuralModel {
 
   @ManyToOne(() => City, (city) => city.neuralModells)
   city: City;
+
+  @OneToMany(() => Prediction, (prediction) => prediction.model)
+  predictions: Prediction[];
 
   private predictor_instance?: Predictor = null;
 

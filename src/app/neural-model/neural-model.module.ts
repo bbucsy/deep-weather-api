@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CityModule } from '../city/city.module';
 import { NeuralModel } from './neural-model.entity';
-import { OpenWeatherModule } from '../open-weather/open-weather.module';
 import { NeuralModelController } from './neural-model.controller';
 import { NeuralModelService } from './neural-model.service';
 import { BullModule } from '@nestjs/bull';
 import { NeuralModelProcessor } from './neural-model.processor';
+import { PredictionModule } from '../prediction/prediction.module';
+import { PredictorServicve } from './predictor.service';
+import { OpenWeatherModule } from '../open-weather/open-weather.module';
 
 @Module({
   imports: [
@@ -16,8 +18,9 @@ import { NeuralModelProcessor } from './neural-model.processor';
     }),
     CityModule,
     OpenWeatherModule,
+    PredictionModule,
   ],
-  providers: [NeuralModelService, NeuralModelProcessor],
+  providers: [NeuralModelService, NeuralModelProcessor, PredictorServicve],
   controllers: [NeuralModelController],
   exports: [NeuralModelService],
 })

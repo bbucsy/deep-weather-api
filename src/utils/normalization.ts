@@ -1,4 +1,4 @@
-import { OpenWeatherDto } from 'src/app/open-weather/open-weather.dto';
+import { OpenWeatherDto } from 'src/app/open-weather/dto/open-weather.dto';
 
 //data got from https://hu.wikipedia.org/wiki/Magyarorsz%C3%A1g_h%C5%91m%C3%A9rs%C3%A9kleti_rekordjainak_list%C3%A1ja
 const minTemp = -34.1;

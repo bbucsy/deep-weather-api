@@ -1,4 +1,4 @@
-interface CreateModelDto {
+export interface CreateModelDto {
   name: string;
   epochs: number;
   city: number;

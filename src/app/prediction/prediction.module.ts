@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { NeuralModel } from '../neural-model/neural-model.entity';
+import { Prediction } from './prediction.entity';
 import { PredictionService } from './prediction.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([NeuralModel])],
+  imports: [TypeOrmModule.forFeature([Prediction])],
   providers: [PredictionService],
+  exports: [PredictionService],
 })
 export class PredictionModule {}
