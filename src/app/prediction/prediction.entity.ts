@@ -15,16 +15,12 @@ export class Prediction {
 
   @Column()
   input: string;
-  //todo: openWeatherDTO
 
-  /*@Column({
-    type: 'enum',
-    enum: WeatherLabel,
-    default: WeatherLabel.Clear,
-  })
-  result: WeatherLabel;*/
   @Column()
   result: number;
+
+  @Column({ name: 'prediction_time', default: 0 })
+  predictionTime: number;
 
   @ManyToOne(() => NeuralModel, (model) => model.predictions)
   model: NeuralModel;

@@ -52,11 +52,15 @@ export class PredictorServicve {
       model.city.lon.toString(),
       Predictor.LAG,
     );
+
+    const predictedTime = data[data.length - 1].utc_date + 3600; // add one hour
+
     const result = await predictor.predict(data);
     return await this.predictionService.create({
       input: data,
       model: model,
       result: result,
+      predictionTime: new Date(predictedTime * 1000),
     });
   }
 }

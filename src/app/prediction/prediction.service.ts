@@ -27,6 +27,7 @@ export class PredictionService {
     const prediction = this.predictionRepository.create({
       input: JSON.stringify(createDto.input),
       model: createDto.model,
+      predictionTime: createDto.predictionTime.getTime(),
       result: createDto.result,
     });
     return this.predictionRepository.save(prediction);
