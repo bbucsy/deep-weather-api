@@ -5,12 +5,15 @@ import { City } from '../city/city.entity';
 import { NeuralModel } from '../neural-model/neural-model.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateModelDto } from './dto/create-model.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class NeuralModelService {
   constructor(
     @InjectRepository(NeuralModel)
     private readonly modelRepository: Repository<NeuralModel>,
+    @InjectQueue('neural-model') private readonly neuralQueue: Queue,
   ) {}
 
   private readonly logger = new Logger(NeuralModelService.name);
@@ -54,5 +57,9 @@ export class NeuralModelService {
     const model = await this.modelRepository.findOneOrFail(id);
     model.accuracy = acc;
     this.modelRepository.save(model);
+  }
+
+  async startWeatherPredictionJob() {
+    await this.neuralQueue.add('predict');
   }
 }

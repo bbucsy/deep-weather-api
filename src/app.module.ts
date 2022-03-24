@@ -8,15 +8,11 @@ import { PredictionModule } from './app/prediction/prediction.module';
 import { CityModule } from './app/city/city.module';
 import { NeuralModelModule } from './app/neural-model/neural-model.module';
 import { BullModule } from '@nestjs/bull';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './app/task/task.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
-    UserModule,
-    OpenWeatherModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    PredictionModule,
-    NeuralModelModule,
     BullModule.forRoot({
       redis: {
         host: 'localhost',
@@ -24,7 +20,15 @@ import { BullModule } from '@nestjs/bull';
         connectTimeout: 5,
       },
     }),
+    ScheduleModule.forRoot(),
+    TypeOrmModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
+    UserModule,
+    OpenWeatherModule,
+    PredictionModule,
+    NeuralModelModule,
     CityModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [],
