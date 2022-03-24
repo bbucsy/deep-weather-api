@@ -13,6 +13,7 @@ import {
 import { Queue } from 'bull';
 import { Response } from 'express';
 import { CityService } from '../city/city.service';
+import { CreateModelDto } from './dto/create-model.dto';
 import { NeuralModel } from './neural-model.entity';
 import { NeuralModelService } from './neural-model.service';
 

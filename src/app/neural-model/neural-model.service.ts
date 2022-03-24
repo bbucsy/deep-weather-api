@@ -4,6 +4,7 @@ import { FindOneOptions, Repository } from 'typeorm';
 import { City } from '../city/city.entity';
 import { NeuralModel } from '../neural-model/neural-model.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateModelDto } from './dto/create-model.dto';
 
 @Injectable()
 export class NeuralModelService {
