@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Prediction } from './prediction.entity';
 
 @Entity()
@@ -11,4 +17,7 @@ export class PredictionResponse {
 
   @ManyToOne(() => Prediction, (prediction) => prediction.responses)
   prediction: Prediction;
+
+  @CreateDateColumn()
+  created_at: Date;
 }

@@ -12,7 +12,7 @@
   <tbody>
     <% responses.forEach(response => { %>
     <tr>
-      <th scope="row">response.dt</th>
+      <td><%= response.created_at %></td>
       <td><%= response.model %></td>
       <td><%= response.predicted%></td>
       <td><%= response.actual %></td>

@@ -38,6 +38,7 @@ export class PredictionController {
     return {
       responses: responses.map((r) => {
         return {
+          created_at: r.created_at.toLocaleString(),
           model: r.prediction.model.name,
           predicted: r.prediction.result,
           actual: r.response,
