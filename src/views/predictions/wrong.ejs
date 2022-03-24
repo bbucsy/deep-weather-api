@@ -1,11 +1,13 @@
 <h1>Sorry to hear that</h1>
 <h2>What was the actual weather?</h2>
 
+<% const city_param = (typeof city_id !='undefined')? `?city=${city_id}`:'' %>
+
 <div class="btn-group" role="group" aria-label="Basic example">
   <% for(let i = 0; i < 7; i++){ %>
 
   <a
-    href="<%= `/predictions/response/${prediction.id}/${i}` %> "
+    href="<%= `/predictions/response/${prediction.id}/${i}${city_param}` %> "
     class="btn btn-outline-primary mr-2"
   >
     <%= helpers.renderWeatherLabel(i) %>

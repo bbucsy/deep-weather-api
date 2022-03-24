@@ -3,9 +3,11 @@ import {
   Get,
   Logger,
   Param,
-  Redirect,
+  Query,
   Render,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { CityService } from '../city/city.service';
 import { PredictionService } from './prediction.service';
 
@@ -49,32 +51,44 @@ export class PredictionController {
 
   @Get('response/:id/wrong')
   @Render('predictions/wrong')
-  async wrongResult(@Param('id') id: number) {
-    return { prediction: await this.predictionService.findOne(id) };
+  async wrongResult(@Param('id') id: number, @Query('city') city_id: number) {
+    return {
+      prediction: await this.predictionService.findOne(id),
+      city_id: city_id,
+    };
   }
 
   @Get('response/:id/:response')
-  @Redirect('/predictions')
   async addResponse(
     @Param('id') id: number,
     @Param('response') response: number,
+    @Query('city') city_id: number,
+    @Res() res: Response,
   ) {
-    this.logger.debug(`id:${id}, response:${response}`);
     await this.predictionService.addResponseToPrediction({
       prediction_id: id,
       response: response,
     });
+    if (typeof city_id != 'undefined') {
+      res.redirect(`/predictions/${city_id}?success`);
+    } else {
+      res.redirect('/predictions');
+    }
   }
 
   @Get(':city_id')
   @Render('predictions/current')
-  async currentPredictions(@Param('city_id') city_id: number) {
+  async currentPredictions(
+    @Param('city_id') city_id: number,
+    @Query('success') success: boolean,
+  ) {
     const now = Date.now();
     const predictions = (
       await this.predictionService.findByCity(city_id)
     ).filter((p) => p.predictionTime > now);
     const city = await this.cityService.findOne(city_id);
     return {
+      success: success,
       city: city,
       predictions: predictions.map((p) => {
         return {

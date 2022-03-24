@@ -1,3 +1,17 @@
+<% if(typeof success != 'undefined'){ %>
+
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Hooray!</strong> Successfully sent response.
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+
+<% } %>
+
 <h1><%=city.name%></h1>
 
 <div class="row">
@@ -19,13 +33,13 @@
         </p>
         <div class="btn-group" role="group">
           <a
-            href="<%= `/predictions/response/${pred.id}/${pred.result}` %> "
+            href="<%= `/predictions/response/${pred.id}/${pred.result}?city=${city.id}` %> "
             class="btn btn-success"
           >
             Thats right
           </a>
           <a
-            href="<%= `/predictions/response/${pred.id}/wrong` %> "
+            href="<%= `/predictions/response/${pred.id}/wrong?city=${city.id}` %> "
             class="btn btn-danger"
             >Wrong guess</a
           >
