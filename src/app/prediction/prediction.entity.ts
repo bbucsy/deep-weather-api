@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { NeuralModel } from '../neural-model/neural-model.entity';
+import { PredictionResponse } from './prediction-response.entity';
 
 @Entity()
 export class Prediction {
@@ -21,4 +28,7 @@ export class Prediction {
 
   @ManyToOne(() => NeuralModel, (model) => model.predictions)
   model: NeuralModel;
+
+  @OneToMany(() => PredictionResponse, (response) => response.prediction)
+  responses: PredictionResponse[];
 }
