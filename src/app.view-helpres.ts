@@ -21,4 +21,36 @@ export const helpers = {
       4,
     )}° ${lon_label}`;
   },
+
+  renderWeatherLabel: (code: number): string => {
+    switch (code) {
+      case 0:
+        return 'Thunderstorm';
+      case 1:
+        return 'Drizzle';
+      case 2:
+        return 'Rain';
+      case 4:
+        return 'Snow';
+      case 5:
+        return 'Clear';
+      case 6:
+        return 'Atmospheric phenomenon ';
+      default:
+        return 'Cloudy';
+    }
+  },
+
+  renderHourWindow: (dt: number, windowSize: number) => {
+    const date = new Date(dt);
+    date.setMinutes(0, 0, 0);
+    const date2 = new Date(date.getTime());
+    date2.setHours(date2.getHours() + windowSize);
+
+    if (date.getTime() < date2.getTime()) {
+      return `${date.toLocaleTimeString()} - ${date2.toLocaleTimeString()}`;
+    } else {
+      return `${date2.toLocaleTimeString()} - ${date.toLocaleTimeString()}`;
+    }
+  },
 };

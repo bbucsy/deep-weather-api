@@ -7,5 +7,6 @@ import {
 export interface CreatePredictionDto {
   input: OpenWeatherDto[];
   result: WeatherLabel;
+  predictionTime: Date;
   model: NeuralModel;
 }
