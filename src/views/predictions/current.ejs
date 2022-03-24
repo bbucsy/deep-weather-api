@@ -5,10 +5,13 @@
 
   <div class="col-12 col-md-4">
     <div class="card">
+      <div class="card-header">
+        <a href="<%= `/neural-model/${pred.model.id}` %> ">
+          <h5><%=pred.model.name%></h5>
+        </a>
+      </div>
       <div class="card-body">
-        <a href="<%= `/neural-model/${pred.model.id}` %> "
-          ><h5 class="card-title"><%=pred.model.name%></h5></a
-        >
+        <h5 class="card-title"><%=helpers.renderHourWindow(pred.dt,-1)%></h5>
         <p class="card-text">
           The model predicted:<strong
             ><%=helpers.renderWeatherLabel(pred.result)%></strong

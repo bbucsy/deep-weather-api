@@ -69,13 +69,17 @@ export class PredictionController {
   @Get(':city_id')
   @Render('predictions/current')
   async currentPredictions(@Param('city_id') city_id: number) {
-    const predictions = await this.predictionService.findByCity(city_id);
+    const now = Date.now();
+    const predictions = (
+      await this.predictionService.findByCity(city_id)
+    ).filter((p) => p.predictionTime > now);
     const city = await this.cityService.findOne(city_id);
     return {
       city: city,
       predictions: predictions.map((p) => {
         return {
           id: p.id,
+          dt: p.predictionTime,
           result: p.result,
           model: {
             id: p.model.id,

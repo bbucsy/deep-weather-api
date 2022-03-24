@@ -40,4 +40,17 @@ export const helpers = {
         return 'Cloudy';
     }
   },
+
+  renderHourWindow: (dt: number, windowSize: number) => {
+    const date = new Date(dt);
+    date.setMinutes(0, 0, 0);
+    const date2 = new Date(date.getTime());
+    date2.setHours(date2.getHours() + windowSize);
+
+    if (date.getTime() < date2.getTime()) {
+      return `${date.toLocaleTimeString()} - ${date2.toLocaleTimeString()}`;
+    } else {
+      return `${date2.toLocaleTimeString()} - ${date.toLocaleTimeString()}`;
+    }
+  },
 };
