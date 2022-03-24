@@ -1,0 +1,35 @@
+<h1><%=city.name%></h1>
+
+<div class="row">
+  <% predictions.forEach(pred => { %>
+
+  <div class="col-12 col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <a href="<%= `/neural-model/${pred.model.id}` %> "
+          ><h5 class="card-title"><%=pred.model.name%></h5></a
+        >
+        <p class="card-text">
+          The model predicted:<strong
+            ><%=helpers.renderWeatherLabel(pred.result)%></strong
+          >
+        </p>
+        <div class="btn-group" role="group">
+          <a
+            href="<%= `/predictions/response/${pred.id}/${pred.result}` %> "
+            class="btn btn-success"
+          >
+            Thats right
+          </a>
+          <a
+            href="<%= `/predictions/response/${pred.id}/wrong` %> "
+            class="btn btn-danger"
+            >Wrong guess</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% }); %>
+</div>

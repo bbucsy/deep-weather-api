@@ -21,4 +21,23 @@ export const helpers = {
       4,
     )}° ${lon_label}`;
   },
+
+  renderWeatherLabel: (code: number): string => {
+    switch (code) {
+      case 0:
+        return 'Thunderstorm';
+      case 1:
+        return 'Drizzle';
+      case 2:
+        return 'Rain';
+      case 4:
+        return 'Snow';
+      case 5:
+        return 'Clear';
+      case 6:
+        return 'Atmospheric phenomenon ';
+      default:
+        return 'Cloudy';
+    }
+  },
 };
