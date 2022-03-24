@@ -119,6 +119,33 @@ export class Predictor {
     return info;
   };
 
+  public trainOnce = async (
+    trainData: OpenWeatherDto[][],
+  ): Promise<tf.History> => {
+    const xs = tf.tensor(
+      trainData
+        .map((td) => td.slice(0, Predictor.LAG))
+        .map(this.convertDtoToNumberArray),
+    );
+
+    const ys = tf.tensor(
+      trainData.map((td) =>
+        tf.oneHot(td[Predictor.LAG].weather, Predictor.LABEL_COUNT).dataSync(),
+      ),
+    );
+
+    const info = await this.model.fit(xs, ys, {
+      epochs: 1,
+      shuffle: true,
+      batchSize: 32,
+      verbose: 0,
+    });
+
+    this.model.save(this.modelPath);
+
+    return info;
+  };
+
   public summary = (override = true): string => {
     if (!override) {
       this.model.summary();

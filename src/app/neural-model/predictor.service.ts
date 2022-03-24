@@ -63,4 +63,35 @@ export class PredictorServicve {
       predictionTime: new Date(predictedTime * 1000),
     });
   }
+
+  async retrainModel(model: NeuralModel): Promise<number> {
+    const predictor = await model.getPredictor();
+
+    model.status = 0;
+    await this.modelRepository.save(model);
+
+    const data = await Promise.all(
+      model.predictions.map(async (p) => {
+        const input = JSON.parse(p.input) as OpenWeatherDto[];
+        const actual = await this.predictionService.getActualWeather(p.id);
+        input.push({
+          city: '',
+          humidity: 0,
+          pressure: 0,
+          temp: 0,
+          utc_date: Math.floor(p.predictionTime / 1000),
+          weather: actual | p.result,
+        });
+        return input;
+      }),
+    );
+
+    const info = await predictor.trainOnce(data);
+
+    // set model status to "active"
+    model.status = 1;
+    await this.modelRepository.save(model);
+
+    return info.history.acc[0] as unknown as number;
+  }
 }

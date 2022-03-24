@@ -90,17 +90,20 @@ export class PredictionController {
     return {
       success: success,
       city: city,
-      predictions: predictions.map((p) => {
-        return {
-          id: p.id,
-          dt: p.predictionTime,
-          result: p.result,
-          model: {
-            id: p.model.id,
-            name: p.model.name,
-          },
-        };
-      }),
+      predictions: await Promise.all(
+        predictions.map(async (p) => {
+          return {
+            id: p.id,
+            dt: p.predictionTime,
+            result: p.result,
+            actual: await this.predictionService.getActualWeather(p.id),
+            model: {
+              id: p.model.id,
+              name: p.model.name,
+            },
+          };
+        }),
+      ),
     };
   }
 }

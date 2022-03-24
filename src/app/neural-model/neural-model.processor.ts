@@ -31,6 +31,23 @@ export class NeuralModelProcessor {
     this.logger.log('Model training done');
   }
 
+  @Process('retrain')
+  async handleRetrain(job: Job) {
+    this.logger.log('Start Retraining model');
+    this.logger.debug(`modelId: ${job.data.modelId}`);
+    const modelId = job.data.modelId as number;
+
+    // Get model from service
+    const model = await this.modelService.findOneWithPredictions(modelId);
+
+    // Start pretraining the model
+    const info = await this.predictorService.retrainModel(model);
+
+    // Set accuracy from training result
+    this.modelService.setAccuracy(modelId, info);
+    this.logger.log('Model RE; train done');
+  }
+
   @Process('predict')
   async handlePredict(job: Job) {
     this.logger.log(`Job(${job.id}) Start predicting weather`);
@@ -57,7 +74,7 @@ export class NeuralModelProcessor {
     this.logger.error(err.stack);
     this.logger.log('Setting model status to error state');
     try {
-      this.modelService.setErrorState(job.data.modelId as number);
+      // this.modelService.setErrorState(job.data.modelId as number);
     } catch (error) {
       this.logger.error('Could not set model status to error state.');
       this.logger.error(error);

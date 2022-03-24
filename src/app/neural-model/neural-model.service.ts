@@ -40,6 +40,10 @@ export class NeuralModelService {
     return this.modelRepository.findOne(id, load);
   }
 
+  async findOneWithPredictions(id: number): Promise<NeuralModel> {
+    return this.modelRepository.findOne(id, { relations: ['predictions'] });
+  }
+
   async findByStatus(status: number): Promise<NeuralModel[]> {
     return await this.modelRepository.find({
       where: { status: status },
@@ -61,5 +65,14 @@ export class NeuralModelService {
 
   async startWeatherPredictionJob() {
     await this.neuralQueue.add('predict');
+  }
+
+  async startWeatherRetrainJobs() {
+    const models = await this.findByStatus(1);
+    await Promise.all(
+      models.map((m) => {
+        return this.neuralQueue.add('retrain', { modelId: m.id });
+      }),
+    );
   }
 }

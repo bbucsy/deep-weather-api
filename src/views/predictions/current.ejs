@@ -31,6 +31,10 @@
             ><%=helpers.renderWeatherLabel(pred.result)%></strong
           >
         </p>
+        <p class="card-text">
+          The users suggested:
+          <strong><%= helpers.renderWeatherLabel(pred.actual) %> </strong>
+        </p>
         <div class="btn-group" role="group">
           <a
             href="<%= `/predictions/response/${pred.id}/${pred.result}?city=${city.id}` %> "

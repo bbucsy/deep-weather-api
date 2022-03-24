@@ -5,6 +5,7 @@ import { Prediction } from './prediction.entity';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { PredictionResponse } from './prediction-response.entity';
 import { CreatePredictionResponseDto } from './dto/create-prediction-response.dto';
+import { mode } from 'src/utils/mode';
 
 @Injectable()
 export class PredictionService {
@@ -44,6 +45,14 @@ export class PredictionService {
       relations: ['model', 'model.city'],
       where: { model: { city: city_id } },
     });
+  }
+
+  async getActualWeather(prediction_id: number): Promise<number> {
+    const responses = await this.responseRepository.find({
+      where: { prediction: { id: prediction_id } },
+    });
+    const label = mode(responses.map((r) => r.response));
+    return label;
   }
 
   async addResponseToPrediction(
