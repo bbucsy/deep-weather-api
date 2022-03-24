@@ -26,6 +26,7 @@ export class PredictionService {
 
   async findByCity(city_id: number): Promise<Prediction[]> {
     return this.predictionRepository.find({
+      relations: ['model', 'model.city'],
       where: { model: { city: city_id } },
     });
   }

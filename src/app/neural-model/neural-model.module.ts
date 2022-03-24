@@ -7,6 +7,8 @@ import { NeuralModelService } from './neural-model.service';
 import { BullModule } from '@nestjs/bull';
 import { NeuralModelProcessor } from './neural-model.processor';
 import { PredictionModule } from '../prediction/prediction.module';
+import { PredictorServicve } from './predictor.service';
+import { OpenWeatherModule } from '../open-weather/open-weather.module';
 
 @Module({
   imports: [
@@ -15,9 +17,10 @@ import { PredictionModule } from '../prediction/prediction.module';
       name: 'neural-model',
     }),
     CityModule,
+    OpenWeatherModule,
     PredictionModule,
   ],
-  providers: [NeuralModelService, NeuralModelProcessor],
+  providers: [NeuralModelService, NeuralModelProcessor, PredictorServicve],
   controllers: [NeuralModelController],
   exports: [NeuralModelService],
 })
