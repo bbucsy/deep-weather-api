@@ -40,6 +40,7 @@ export class TFModel {
       loss: tf.losses.meanSquaredError,
       metrics: ['accuracy'],
     });
+    model.summary();
     return model;
   }
 

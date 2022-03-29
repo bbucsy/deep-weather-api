@@ -27,14 +27,6 @@ export const numifyData = (data: OpenWeatherDto): number[] => {
   return [n.humidity, n.pressure, n.temp, n.weather];
 };
 
-export const prepareDataSet = (
-  data: TrainingDataEntry[],
-): tf.data.Dataset<tf.TensorContainer> => {
-  const xs = tf.data.array(data.map((d) => tf.tensor(d.x)));
-  const ys = tf.data.array(data.map((d) => tf.oneHot(d.y, LABEL_COUNT)));
-  return tf.data.zip({ xs, ys });
-};
-
 export const convertDtoToDataEntry = (
   dto: OpenWeatherDto[],
 ): TrainingDataEntry => {
@@ -43,4 +35,21 @@ export const convertDtoToDataEntry = (
   const x = dto.slice(0, LAG).map(numifyData);
   const y = dto[LAG].weather;
   return { x, y };
+};
+
+export const prepareDataSet = (
+  data: TrainingDataEntry[],
+): tf.data.Dataset<tf.TensorContainer> => {
+  const xs = tf.data.array(data.map((d) => tf.tensor(d.x)));
+  const ys = tf.data.array(data.map((d) => tf.oneHot(d.y, LABEL_COUNT)));
+  return tf.data.zip({ xs, ys });
+};
+
+export const preparePredictionInput = (dto: OpenWeatherDto[]): number[][] => {
+  if (dto.length !== LAG) throw 'Unexpected array lenght at data process';
+  return dto.map(numifyData);
+};
+
+export const tensorifyPredictionInput = (input: number[][]): tf.Tensor => {
+  return tf.tensor([input]);
 };

@@ -1,14 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { join } from 'path';
-import * as fs from 'fs';
-import { OpenWeatherDto } from '../open-weather/dto/open-weather.dto';
 import { PredictionService } from '../prediction/prediction.service';
 import { NeuralModel } from './neural-model.entity';
-import { Predictor } from './predictor';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Prediction } from '../prediction/prediction.entity';
 import { OpenWeatherService } from '../open-weather/open-weather.service';
+import {
+  convertDtoToDataEntry,
+  loadInitialTrainingData,
+  prepareDataSet,
+  preparePredictionInput,
+  tensorifyPredictionInput,
+} from '../tensorflow/dataConvert';
+import { LAG } from 'src/utils/constants';
 
 @Injectable()
 export class PredictorServicve {
@@ -22,44 +26,41 @@ export class PredictorServicve {
 
   async pretrainModel(model: NeuralModel): Promise<number[]> {
     this.logger.debug('Pretrain function called');
-    const predictor = await model.getPredictor();
+    const predictor = await model.loadOrCreatePredictor();
     this.logger.debug('Got Predictor object');
 
     //load train data
-    const trainDataPath = join(__dirname, 'training_data.json');
-    const tainDataRAW = fs.readFileSync(trainDataPath, 'utf-8');
-    const data = JSON.parse(tainDataRAW) as Array<OpenWeatherDto>;
+    const trainingData = loadInitialTrainingData().map(convertDtoToDataEntry);
 
-    //Prepare data with windows consisting LAG+1 entires
-    const prepared: OpenWeatherDto[][] = [];
-    for (let i = Predictor.LAG; i < data.length; i++) {
-      prepared.push(data.slice(i - Predictor.LAG, i + 1));
-    }
+    const trainingDS = prepareDataSet(trainingData);
     this.logger.debug('Pretrain data loaded');
-    const info = await predictor.train(prepared);
+
+    const info = await predictor.train(trainingDS, model.epochs);
 
     // set model status to "active"
     model.status = 1;
     await this.modelRepository.save(model);
 
-    return info.history.acc as unknown as number[];
+    return info;
   }
 
   async predictWeather(model: NeuralModel): Promise<Prediction> {
-    const predictor = await model.getPredictor();
-    const data = await this.weatherService.getHistoricalHorlyData(
+    const predictor = await model.loadOrCreatePredictor();
+    const dataRAW = await this.weatherService.getHistoricalHorlyData(
       model.city.lat.toString(),
       model.city.lon.toString(),
-      Predictor.LAG,
+      LAG,
     );
+    const data = preparePredictionInput(dataRAW);
 
-    const predictedTime = data[data.length - 1].utc_date + 3600; // add one hour
+    const predictedTime = dataRAW[dataRAW.length - 1].utc_date + 3600; // add one hour
 
-    const result = await predictor.predict(data);
+    const result = predictor.predict(tensorifyPredictionInput(data));
+
     return await this.predictionService.create({
       input: data,
       model: model,
-      result: result,
+      result: result.prediction,
       predictionTime: new Date(predictedTime * 1000),
     });
   }
