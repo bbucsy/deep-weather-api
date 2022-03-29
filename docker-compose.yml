@@ -1,0 +1,30 @@
+version: '3'
+services:
+  redis:
+    image: redis:6.2.6-alpine3.15
+    restart: always
+    networks:
+      - deep-weather
+  web:
+    build: .
+    environment:
+      - REDIS_HOST=redis
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - models_folder:/home/node/models
+    ports:
+      - '3000:3000'
+    networks:
+      - deep-weather
+    depends_on:
+      - redis
+networks:
+  deep-weather:
+
+# Add your volumes
+volumes:
+  models_folder:
+    external:
+      name: models_folder

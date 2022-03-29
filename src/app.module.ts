@@ -13,16 +13,16 @@ import { TaskModule } from './app/task/task.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: process.env.REDIS_HOST || 'localhost',
         port: 6379,
         connectTimeout: 5,
       },
     }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot(),
-    ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     OpenWeatherModule,
     PredictionModule,
