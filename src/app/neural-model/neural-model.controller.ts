@@ -57,7 +57,7 @@ export class NeuralModelController {
   @Get('predict')
   async predict(@Res() res: Response) {
     await this.neuralQueue.add('predict');
-    return res.redirect(`/city`);
+    return res.redirect(`/predictions`);
   }
 
   @Get(':id')

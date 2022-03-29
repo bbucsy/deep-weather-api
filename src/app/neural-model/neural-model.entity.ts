@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { City } from '../city/city.entity';
 import { Prediction } from '../prediction/prediction.entity';
-import { Predictor } from './predictor';
+import { TFModel } from '../tensorflow/TFModel';
 
 @Entity()
 export class NeuralModel {
@@ -42,12 +42,14 @@ export class NeuralModel {
   @OneToMany(() => Prediction, (prediction) => prediction.model)
   predictions: Prediction[];
 
-  private predictor_instance?: Predictor = null;
-
-  getPredictor = async (): Promise<Predictor> => {
-    if (this.predictor_instance == null) {
-      this.predictor_instance = await Predictor.create(this);
+  public async loadOrCreatePredictor(): Promise<TFModel> {
+    try {
+      return await TFModel.loadModel(this.file_path);
+    } catch (error) {
+      return await TFModel.createAndSaveModel(this.file_path, {
+        hiddenLayerCount: this.hiddenLayerCount,
+        lstmUnits: this.lstm_count,
+      });
     }
-    return this.predictor_instance;
-  };
+  }
 }
