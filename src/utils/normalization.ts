@@ -41,3 +41,11 @@ export const unNormalizeWeather = (values: OpenWeatherDto): OpenWeatherDto => {
     temp: unNormalize(values.temp, minTemp, maxTemp),
   };
 };
+
+export const max = <T>(array: T[]): { idx: number; value: T } => {
+  let mi = 0;
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] > array[mi]) mi = i;
+  }
+  return { value: array[mi], idx: mi };
+};
