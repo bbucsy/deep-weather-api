@@ -3,7 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { OWM_ENV_KEY } from 'src/utils/constants';
 import { OpenWeatherHistoricalResponse } from './dto/open-weather-history.response';
-import { OpenWeatherDto } from './dto/open-weather.dto';
+import {
+  OpenWeatherDto,
+  OpenWeatherDtoFromResponse,
+  weatherCodeToLabel,
+} from './dto/open-weather.dto';
 import { OpenWeatherResponse } from './dto/open-weather.response';
 
 @Injectable()
@@ -28,7 +32,7 @@ export class OpenWeatherService {
 
     const response = await axios.get<OpenWeatherResponse>(url);
 
-    return OpenWeatherDto.fromOpenWeatherResponse(response.data);
+    return OpenWeatherDtoFromResponse(response.data);
   }
 
   private historicalUrlBuilder = (lat: string, lon: string, dt: number) => {
@@ -63,7 +67,7 @@ export class OpenWeatherService {
               pressure: h.pressure,
               temp: h.temp,
               utc_date: h.dt,
-              weather: OpenWeatherDto.weatherCodeToLabel(h.weather[0].id),
+              weather: weatherCodeToLabel(h.weather[0].id),
             };
             return dto;
           })
