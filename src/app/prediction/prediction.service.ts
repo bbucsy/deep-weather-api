@@ -56,4 +56,18 @@ export class PredictionService {
     });
     return await this.responseRepository.save(response);
   }
+
+  async getActualWeather(prediction: Prediction): Promise<number> {
+    const query = await this.responseRepository
+      .createQueryBuilder('response')
+      .select('response.response', 'label')
+      .addSelect('count(*)', 'numRes')
+      .where('response.predictionId = :id', { id: prediction.id })
+      .groupBy('label')
+      .orderBy('numRes', 'DESC')
+      .limit(1);
+
+    const result: { label: number; numRes: number } = await query.getRawOne();
+    return result?.label || prediction.result;
+  }
 }
