@@ -27,6 +27,10 @@ export class CityController {
   constructor(private readonly cityService: CityService) {}
   private logger = new Logger(CityController.name);
 
+  /**
+   *
+   * Creates a new city
+   */
   @Post()
   async create(@Body() createCityDto: CreateCityDto) {
     const city = await this.cityService.create(createCityDto);
@@ -36,12 +40,14 @@ export class CityController {
     };
   }
 
+  /** Returns all cities */
   @Get()
   @ApiOkResponse({ type: [CityDto] })
   async findAll(): Promise<CityDto[]> {
     return (await this.cityService.findAll()).map(this.cityToDto);
   }
 
+  /** Returns a specific city */
   @Get(':id')
   @ApiOkResponse({ type: CityDto })
   @ApiNotFoundResponse({ description: 'City not found with specified ID' })
@@ -51,6 +57,7 @@ export class CityController {
     return this.cityToDto(city);
   }
 
+  /** Deletes a specific city */
   @Delete(':id')
   @ApiOkResponse({ description: 'City with specified ID is deleted' })
   @ApiResponse({ status: 204, description: 'No city found with this id' })
