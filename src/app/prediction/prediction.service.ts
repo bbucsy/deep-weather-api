@@ -23,9 +23,11 @@ export class PredictionService {
     });
   }
 
-  async findAllPredictionsWithModels(minTime = 0): Promise<Prediction[]> {
+  async findAllPredictionsWithModelsAndCity(
+    minTime = 0,
+  ): Promise<Prediction[]> {
     return this.predictionRepository.find({
-      relations: ['model'],
+      relations: ['model', 'model.city'],
       where: { predictionTime: MoreThan(minTime) },
     });
   }

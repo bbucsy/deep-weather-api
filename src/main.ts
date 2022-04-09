@@ -18,6 +18,7 @@ async function bootstrap() {
     .setDescription('API description for the deep-weather project')
     .setVersion('1.0')
     .addTag('city')
+    .addTag('predictions')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
