@@ -5,6 +5,15 @@
     "spec": false
   },
   "compilerOptions": {
-    "assets": ["**/*.json"]
+    "assets": ["**/*.json"],
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "classValidatorShim": false,
+          "introspectComments": true
+        }
+      }
+    ]
   }
 }
