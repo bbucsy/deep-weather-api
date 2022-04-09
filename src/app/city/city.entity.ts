@@ -17,6 +17,7 @@ export class City {
 
   @OneToMany(() => NeuralModel, (neuralModel) => neuralModel.city, {
     eager: true,
+    onDelete: 'CASCADE',
   })
-  neuralModells: NeuralModel[];
+  neuralModels: NeuralModel[];
 }

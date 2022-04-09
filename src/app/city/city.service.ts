@@ -34,6 +34,7 @@ export class CityService {
 
   async remove(id: number): Promise<City> {
     const city = await this.cityRepository.findOne(id);
-    return this.cityRepository.remove(city);
+    if (typeof city !== 'undefined') this.cityRepository.remove(city);
+    return city;
   }
 }

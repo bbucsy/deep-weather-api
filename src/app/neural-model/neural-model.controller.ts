@@ -3,18 +3,16 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Logger,
+  NotFoundException,
   Param,
   Post,
-  Query,
-  Redirect,
-  Render,
-  Res,
 } from '@nestjs/common';
 import { Queue } from 'bull';
-import { Response } from 'express';
 import { CityService } from '../city/city.service';
 import { CreateModelDto } from './dto/create-model.dto';
+import { NeuralModelDto, NeuralModelListDto } from './dto/neural-model.dto';
 import { NeuralModel } from './neural-model.entity';
 import { NeuralModelService } from './neural-model.service';
 
@@ -29,49 +27,61 @@ export class NeuralModelController {
   private readonly logger = new Logger(NeuralModelController.name);
 
   @Post()
-  async createModel(@Body() dto: CreateModelDto, @Res() res: Response) {
+  async createModel(@Body() dto: CreateModelDto) {
     this.logger.debug(dto);
     const city = await this.cityService.findOne(dto.city);
+    if (typeof city === 'undefined')
+      throw new NotFoundException(undefined, 'City not found');
+
     const model = await this.modelService.createModell(city, dto);
     await this.neuralQueue.add('pretrain', { modelId: model.id });
-    return res.redirect(`/neural-model/${model.id}`);
   }
 
-  @Get('new')
-  @Render('neural-model/new')
-  async new(@Query('city') cityId: number, @Res() res) {
-    this.logger.debug(`Requested city Id: ${cityId}`);
-    const cities = await this.cityService.findAll();
-
-    if (cities.length == 0) res.redirect('/city/new');
-
-    const model = new NeuralModel();
-
-    if (typeof cityId !== undefined) {
-      const city = await this.cityService.findOne(cityId);
-      model.city = city;
-    }
-
-    return { neuralModel: model, cities: cities };
+  @Get()
+  async findAllModels(): Promise<{ id: number; name: string }[]> {
+    const models = await this.modelService.findAll();
+    return models.map(this.modelToListDto);
   }
 
-  @Get('predict')
-  async predict(@Res() res: Response) {
+  @Post('predict')
+  @HttpCode(200)
+  async predict() {
     await this.neuralQueue.add('predict');
-    return res.redirect(`/predictions`);
   }
 
-  @Get('retrain')
-  @Redirect('/')
+  @Post('retrain')
+  @HttpCode(200)
   async retrain() {
-    this.modelService.startRetrainJobs();
+    await this.modelService.startRetrainJobs();
   }
 
   @Get(':id')
-  @Render('neural-model/show')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<NeuralModelDto> {
     const model = await this.modelService.findOne(+id, true);
-    this.logger.debug(`model city: ${model.city.name}`);
-    return { neuralModel: model };
+    if (typeof model === undefined) throw new NotFoundException();
+    return this.ModelToDto(model);
+  }
+
+  private ModelToDto(model: NeuralModel): NeuralModelDto {
+    return {
+      id: model.id,
+      name: model.name,
+      city: {
+        id: model.city.id,
+        name: model.city.name,
+      },
+      accuracy: model.accuracy,
+      status: model.status,
+      epochs: model.epochs,
+      hiddenLayerCount: model.hiddenLayerCount,
+      lstm_count: model.lstm_count,
+    };
+  }
+  private modelToListDto(model: NeuralModel): NeuralModelListDto {
+    return {
+      id: model.id,
+      name: model.name,
+      status: model.status,
+    };
   }
 }

@@ -33,6 +33,10 @@ export class NeuralModelService {
     return model;
   }
 
+  async findAll(): Promise<NeuralModel[]> {
+    return await this.modelRepository.find();
+  }
+
   async findOne(id: number, withCity = false): Promise<NeuralModel> {
     const load: FindOneOptions<NeuralModel> = withCity
       ? { relations: ['city'] }

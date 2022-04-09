@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Prediction } from './prediction.entity';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { PredictionResponse } from './prediction-response.entity';
@@ -17,8 +17,17 @@ export class PredictionService {
 
   private logger = new Logger(PredictionService.name);
 
-  async findAllPredictions(): Promise<Prediction[]> {
-    return this.predictionRepository.find();
+  async findAllPredictions(minTime = 0): Promise<Prediction[]> {
+    return this.predictionRepository.find({
+      where: { predictionTime: MoreThan(minTime) },
+    });
+  }
+
+  async findAllPredictionsWithModels(minTime = 0): Promise<Prediction[]> {
+    return this.predictionRepository.find({
+      relations: ['model'],
+      where: { predictionTime: MoreThan(minTime) },
+    });
   }
 
   async findOne(id: number): Promise<Prediction> {
@@ -41,10 +50,10 @@ export class PredictionService {
     });
   }
 
-  async findByCity(city_id: number): Promise<Prediction[]> {
+  async findByCity(city_id: number, minTime = 0): Promise<Prediction[]> {
     return this.predictionRepository.find({
       relations: ['model', 'model.city'],
-      where: { model: { city: city_id } },
+      where: { model: { city: city_id }, predictionTime: MoreThan(minTime) },
     });
   }
 
@@ -59,6 +68,8 @@ export class PredictionService {
     dto: CreatePredictionResponseDto,
   ): Promise<PredictionResponse> {
     const pred = await this.predictionRepository.findOne(dto.prediction_id);
+    if (typeof pred === 'undefined')
+      throw new NotFoundException(undefined, 'Prediction not found');
     const response = this.responseRepository.create({
       prediction: pred,
       response: dto.response,
