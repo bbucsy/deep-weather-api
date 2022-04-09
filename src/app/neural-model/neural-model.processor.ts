@@ -74,7 +74,8 @@ export class NeuralModelProcessor {
     this.logger.error(err.stack);
     this.logger.log('Setting model status to error state');
     try {
-      this.modelService.setErrorState(job.data.modelId as number);
+      if (typeof job.data.modelId !== 'undefined')
+        this.modelService.setErrorState(job.data.modelId as number);
     } catch (error) {
       this.logger.error('Could not set model status to error state.');
       this.logger.error(error);
