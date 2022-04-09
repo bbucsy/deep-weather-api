@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Redirect,
-  Render,
   Res,
 } from '@nestjs/common';
 import { Queue } from 'bull';
@@ -38,7 +37,6 @@ export class NeuralModelController {
   }
 
   @Get('new')
-  @Render('neural-model/new')
   async new(@Query('city') cityId: number, @Res() res) {
     this.logger.debug(`Requested city Id: ${cityId}`);
     const cities = await this.cityService.findAll();
@@ -68,7 +66,6 @@ export class NeuralModelController {
   }
 
   @Get(':id')
-  @Render('neural-model/show')
   async findOne(@Param('id') id: string) {
     const model = await this.modelService.findOne(+id, true);
     this.logger.debug(`model city: ${model.city.name}`);

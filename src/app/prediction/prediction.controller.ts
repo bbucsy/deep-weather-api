@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Logger,
-  Param,
-  Query,
-  Render,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Logger, Param, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CityService } from '../city/city.service';
 import { PredictionService } from './prediction.service';
@@ -20,7 +12,6 @@ export class PredictionController {
   private readonly logger = new Logger(PredictionController.name);
 
   @Get()
-  @Render('predictions/index')
   async index() {
     const cities = await this.cityService.findAll();
     return {
@@ -34,7 +25,6 @@ export class PredictionController {
   }
 
   @Get('responses')
-  @Render('predictions/responses')
   async responses() {
     const responses = await this.predictionService.findAllResponsesWithModels();
     return {
@@ -50,7 +40,6 @@ export class PredictionController {
   }
 
   @Get('response/:id/wrong')
-  @Render('predictions/wrong')
   async wrongResult(@Param('id') id: number, @Query('city') city_id: number) {
     return {
       prediction: await this.predictionService.findOne(id),
@@ -77,7 +66,6 @@ export class PredictionController {
   }
 
   @Get(':city_id')
-  @Render('predictions/current')
   async currentPredictions(
     @Param('city_id') city_id: number,
     @Query('success') success: boolean,

@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Render,
-  Redirect,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Redirect } from '@nestjs/common';
 import { City } from './city.entity';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
@@ -16,7 +8,6 @@ export class CityController {
   constructor(private readonly cityService: CityService) {}
 
   @Post()
-  @Render('city/new')
   async create(@Body() createCityDto: CreateCityDto) {
     console.log(createCityDto);
     return {
@@ -26,19 +17,16 @@ export class CityController {
   }
 
   @Get('new')
-  @Render('city/new')
   new() {
     return { city: new City() };
   }
 
   @Get()
-  @Render('city/index')
   async findAll() {
     return { cities: await this.cityService.findAll() };
   }
 
   @Get(':id')
-  @Render('city/show')
   async findOne(@Param('id') id: string) {
     return { city: await this.cityService.findOne(+id) };
   }
