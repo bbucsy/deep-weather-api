@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-class neuralModelBase {
-  id: number;
-  name: string;
-}
+import { neuralModelBase } from 'src/app/neural-model/dto/neural-model.dto';
 
 export class CityDto {
   /**

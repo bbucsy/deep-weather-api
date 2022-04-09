@@ -1,4 +1,4 @@
-export interface NeuralModelDto {
+export class NeuralModelDto {
   id: number;
 
   name: string;
@@ -16,10 +16,15 @@ export interface NeuralModelDto {
   city: { id: number; name: string };
 }
 
-export interface NeuralModelListDto {
+export class NeuralModelListDto {
   id: number;
 
   name: string;
 
   status: number;
+}
+
+export class neuralModelBase {
+  id: number;
+  name: string;
 }
