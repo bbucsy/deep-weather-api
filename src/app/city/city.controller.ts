@@ -10,16 +10,27 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { City } from './city.entity';
 import { CityService } from './city.service';
 import { CityDto } from './dto/city.dto';
 import { CreateCityDto } from './dto/create-city.dto';
 
+@ApiTags('city')
 @Controller('city')
 export class CityController {
   constructor(private readonly cityService: CityService) {}
   private logger = new Logger(CityController.name);
 
+  /**
+   *
+   * Creates a new city
+   */
   @Post()
   async create(@Body() createCityDto: CreateCityDto) {
     const city = await this.cityService.create(createCityDto);
@@ -29,19 +40,27 @@ export class CityController {
     };
   }
 
+  /** Returns all cities */
   @Get()
+  @ApiOkResponse({ type: [CityDto] })
   async findAll(): Promise<CityDto[]> {
     return (await this.cityService.findAll()).map(this.cityToDto);
   }
 
+  /** Returns a specific city */
   @Get(':id')
+  @ApiOkResponse({ type: CityDto })
+  @ApiNotFoundResponse({ description: 'City not found with specified ID' })
   async findOne(@Param('id') id: number): Promise<CityDto> {
     const city = await this.cityService.findOne(id);
     if (!city) throw new NotFoundException();
     return this.cityToDto(city);
   }
 
+  /** Deletes a specific city */
   @Delete(':id')
+  @ApiOkResponse({ description: 'City with specified ID is deleted' })
+  @ApiResponse({ status: 204, description: 'No city found with this id' })
   async remove(@Param('id') id: string) {
     const removed = await this.cityService.remove(+id);
     this.logger.debug(removed);

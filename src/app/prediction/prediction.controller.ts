@@ -7,6 +7,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CityService } from '../city/city.service';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { PredictionListDto } from './dto/prediction-list.dto';
@@ -15,6 +16,7 @@ import { PredictionResponse } from './prediction-response.entity';
 import { Prediction } from './prediction.entity';
 import { PredictionService } from './prediction.service';
 
+@ApiTags('predictions')
 @Controller('predictions')
 export class PredictionController {
   constructor(
@@ -23,17 +25,30 @@ export class PredictionController {
   ) {}
   private readonly logger = new Logger(PredictionController.name);
 
+  /**
+   * Gets all user responses to weather predictions
+   */
   @Get('responses')
   async responses(): Promise<ResponseListDto[]> {
     const responses = await this.predictionService.findAllResponsesWithModels();
+    this.logger.debug(JSON.stringify(responses));
     return responses.map(this.responseToListDto);
   }
 
+  /**
+   * Creates a user response to a specified prediction
+   * @param createResponseDto
+   */
   @Post('responses')
   async addResponse(@Body() createResponseDto: CreateResponseDto) {
     await this.predictionService.addResponseToPrediction(createResponseDto);
   }
 
+  /**
+   * Returns all predictions predicted to a given city.
+   * Only those predictions will show up, that are in the time window of the time of calling the endpoint
+   * @param city_id The id of the city
+   */
   @Get('city/:city_id')
   async currentPredictionsOfCity(
     @Param('city_id') city_id: number,
@@ -53,11 +68,15 @@ export class PredictionController {
     return Promise.all(dtos);
   }
 
+  /**
+   *
+   * Returns all predictions, that are in the current time window
+   */
   @Get()
   async currentPredictions(): Promise<PredictionListDto[]> {
     const now = Date.now();
     const predictions =
-      await this.predictionService.findAllPredictionsWithModels(now);
+      await this.predictionService.findAllPredictionsWithModelsAndCity(now);
 
     const dtos = predictions.map(async (p) => {
       const userLabel = await this.predictionService.getActualWeather(p);
@@ -86,6 +105,10 @@ export class PredictionController {
   ): PredictionListDto {
     return {
       id: p.id,
+      city: {
+        id: p.model.city.id,
+        name: p.model.city.name,
+      },
       model: {
         id: p.model.id,
         name: p.model.name,
