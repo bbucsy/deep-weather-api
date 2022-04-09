@@ -62,4 +62,13 @@ export class NeuralModelService {
   async startWeatherPredictionJob() {
     await this.neuralQueue.add('predict');
   }
+
+  async startRetrainJobs() {
+    const models = await this.findByStatus(1);
+    await Promise.all(
+      models.map((m) => {
+        return this.neuralQueue.add('retrain', { modelId: m.id });
+      }),
+    );
+  }
 }

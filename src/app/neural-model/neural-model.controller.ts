@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Query,
+  Redirect,
   Render,
   Res,
 } from '@nestjs/common';
@@ -58,6 +59,12 @@ export class NeuralModelController {
   async predict(@Res() res: Response) {
     await this.neuralQueue.add('predict');
     return res.redirect(`/predictions`);
+  }
+
+  @Get('retrain')
+  @Redirect('/')
+  async retrain() {
+    this.modelService.startRetrainJobs();
   }
 
   @Get(':id')

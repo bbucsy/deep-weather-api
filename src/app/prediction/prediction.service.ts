@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Prediction } from './prediction.entity';
@@ -14,6 +14,8 @@ export class PredictionService {
     @InjectRepository(PredictionResponse)
     private readonly responseRepository: Repository<PredictionResponse>,
   ) {}
+
+  private logger = new Logger(PredictionService.name);
 
   async findAllPredictions(): Promise<Prediction[]> {
     return this.predictionRepository.find();
@@ -46,6 +48,13 @@ export class PredictionService {
     });
   }
 
+  async findByModel(model_id: number): Promise<Prediction[]> {
+    return this.predictionRepository.find({
+      relations: ['model'],
+      where: { model: { id: model_id } },
+    });
+  }
+
   async addResponseToPrediction(
     dto: CreatePredictionResponseDto,
   ): Promise<PredictionResponse> {
@@ -66,6 +75,8 @@ export class PredictionService {
       .groupBy('label')
       .orderBy('numRes', 'DESC')
       .limit(1);
+
+    this.logger.debug(query.getSql());
 
     const result: { label: number; numRes: number } = await query.getRawOne();
     return result?.label || prediction.result;
