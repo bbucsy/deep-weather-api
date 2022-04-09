@@ -11,6 +11,7 @@ import {
   prepareDataSet,
   preparePredictionInput,
   tensorifyPredictionInput,
+  TrainingDataEntry,
 } from '../tensorflow/dataConvert';
 import { LAG } from 'src/utils/constants';
 
@@ -63,5 +64,34 @@ export class PredictorServicve {
       result: result.prediction,
       predictionTime: new Date(predictedTime * 1000),
     });
+  }
+
+  async retrainModel(model: NeuralModel): Promise<number> {
+    const predictor = await model.loadOrCreatePredictor();
+
+    model.status = 0;
+    await this.modelRepository.save(model);
+
+    const predictions = await this.predictionService.findByModel(model.id);
+
+    const data: TrainingDataEntry[] = await Promise.all(
+      predictions.map(async (p) => {
+        const input = JSON.parse(p.input) as number[][];
+        const user_label = await this.predictionService.getActualWeather(p);
+        const entry: TrainingDataEntry = {
+          x: input,
+          y: user_label,
+        };
+        return entry;
+      }),
+    );
+
+    const info = await predictor.train(prepareDataSet(data), 1);
+
+    // set model status to "active"
+    model.status = 1;
+    await this.modelRepository.save(model);
+
+    return info[0];
   }
 }

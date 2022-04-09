@@ -87,20 +87,24 @@ export class PredictionController {
       await this.predictionService.findByCity(city_id)
     ).filter((p) => p.predictionTime > now);
     const city = await this.cityService.findOne(city_id);
+
     return {
       success: success,
       city: city,
-      predictions: predictions.map((p) => {
-        return {
-          id: p.id,
-          dt: p.predictionTime,
-          result: p.result,
-          model: {
-            id: p.model.id,
-            name: p.model.name,
-          },
-        };
-      }),
+      predictions: await Promise.all(
+        predictions.map(async (p) => {
+          return {
+            id: p.id,
+            dt: p.predictionTime,
+            result: p.result,
+            actual: await this.predictionService.getActualWeather(p),
+            model: {
+              id: p.model.id,
+              name: p.model.name,
+            },
+          };
+        }),
+      ),
     };
   }
 }
