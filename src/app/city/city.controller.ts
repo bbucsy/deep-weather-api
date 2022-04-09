@@ -1,45 +1,69 @@
-import { Controller, Get, Post, Body, Param, Redirect } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Logger,
+  NotFoundException,
+  Delete,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { City } from './city.entity';
 import { CityService } from './city.service';
+import { CityDto } from './dto/city.dto';
 import { CreateCityDto } from './dto/create-city.dto';
 
 @Controller('city')
 export class CityController {
   constructor(private readonly cityService: CityService) {}
+  private logger = new Logger(CityController.name);
 
   @Post()
   async create(@Body() createCityDto: CreateCityDto) {
-    console.log(createCityDto);
+    const city = await this.cityService.create(createCityDto);
     return {
-      city: await this.cityService.create(createCityDto),
-      message: 'Created successfully',
+      id: city.id,
+      message: 'Created city successfully',
     };
   }
 
-  @Get('new')
-  new() {
-    return { city: new City() };
-  }
-
   @Get()
-  async findAll() {
-    return { cities: await this.cityService.findAll() };
+  async findAll(): Promise<CityDto[]> {
+    return (await this.cityService.findAll()).map(this.cityToDto);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return { city: await this.cityService.findOne(+id) };
+  async findOne(@Param('id') id: number): Promise<CityDto> {
+    const city = await this.cityService.findOne(id);
+    if (!city) throw new NotFoundException();
+    return this.cityToDto(city);
   }
 
-  /*@Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCityDto: UpdateCityDto) {
-    return this.cityService.update(+id, updateCityDto);
-  }
-*/
-
-  @Get(':id/delete')
-  @Redirect('/city')
+  @Delete(':id')
   async remove(@Param('id') id: string) {
-    await this.cityService.remove(+id);
+    const removed = await this.cityService.remove(+id);
+    this.logger.debug(removed);
+    if (removed === undefined)
+      throw new HttpException(
+        {
+          status: HttpStatus.NO_CONTENT,
+          error: 'No content',
+        },
+        HttpStatus.NO_CONTENT,
+      );
+  }
+
+  private cityToDto(city: City): CityDto {
+    return {
+      id: city.id,
+      name: city.name,
+      lat: city.lat,
+      lon: city.lon,
+      neuralModels: city.neuralModels.map((nm) => {
+        return { id: nm.id, name: nm.name };
+      }),
+    };
   }
 }

@@ -36,10 +36,12 @@ export class NeuralModel {
   @Column({ type: 'int', default: 0 })
   status: number;
 
-  @ManyToOne(() => City, (city) => city.neuralModells)
+  @ManyToOne(() => City, (city) => city.neuralModels)
   city: City;
 
-  @OneToMany(() => Prediction, (prediction) => prediction.model)
+  @OneToMany(() => Prediction, (prediction) => prediction.model, {
+    onDelete: 'CASCADE',
+  })
   predictions: Prediction[];
 
   public async loadOrCreatePredictor(): Promise<TFModel> {
