@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
 import { UserModule } from './app/user/user.module';
 import { OpenWeatherModule } from './app/open-weather/open-weather.module';
 import { ConfigModule } from '@nestjs/config';
@@ -11,6 +10,7 @@ import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './app/task/task.module';
 import { AuthModule } from './app/auth/auth.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
