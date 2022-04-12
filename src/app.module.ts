@@ -10,7 +10,7 @@ import { NeuralModelModule } from './app/neural-model/neural-model.module';
 import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './app/task/task.module';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './app/auth/auth.module';
 
 @Module({
   imports: [
