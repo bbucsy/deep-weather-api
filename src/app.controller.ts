@@ -1,11 +1,10 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Redirect } from '@nestjs/common';
 
 @Controller()
 export class AppController {
   @Get()
-  async getHello() {
-    return {
-      message: 'Welcome',
-    };
+  @Redirect('/api-json')
+  index() {
+    //redirect to index
   }
 }
