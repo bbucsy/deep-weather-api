@@ -13,7 +13,9 @@ import { LoginDto, LoginResponseDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { RequiredRole } from './role.guard';
 import { TYPOERM_ERROR_CODE } from 'src/utils/constants';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
