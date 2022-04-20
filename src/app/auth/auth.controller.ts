@@ -1,12 +1,18 @@
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  InternalServerErrorException,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { Role } from '../user/user-role.enum';
-import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { LoginDto, LoginResponseDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local.guard';
 import { RequiredRole } from './role.guard';
+import { TYPOERM_ERROR_CODE } from 'src/utils/constants';
 
 @Controller('auth')
 export class AuthController {
@@ -16,16 +22,25 @@ export class AuthController {
   ) {}
 
   @RequiredRole(Role.Guest)
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiBody({ type: LoginDto })
-  async login(@Request() req): Promise<LoginResponseDto> {
-    return this.authService.login(req.user as User);
+  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
+    const user = await this.authService.validateUser(loginDto);
+    if (user == null) throw new UnauthorizedException();
+
+    return await this.authService.generateToken(user);
   }
 
   @RequiredRole(Role.Guest)
   @Post('register')
-  async register(@Body() body: LoginDto) {
-    await this.userService.create(body.username, body.password);
+  async register(@Body() body: LoginDto): Promise<LoginResponseDto> {
+    try {
+      const user = await this.userService.create(body.username, body.password);
+      return await this.authService.generateToken(user);
+    } catch (error) {
+      if (error?.errno == TYPOERM_ERROR_CODE.UniqueViolation)
+        throw new BadRequestException(undefined, 'User already exists');
+
+      throw new InternalServerErrorException();
+    }
   }
 }
