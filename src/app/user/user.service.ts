@@ -17,7 +17,7 @@ export class UserService {
     return typeof user === 'undefined' ? undefined : user[0];
   }
 
-  async create(username: string, password: string) {
+  async create(username: string, password: string): Promise<User> {
     const salt = bcrypt.genSaltSync();
     const passwordHash = await bcrypt.hash(password, salt);
     const user = this.userRepository.create({
@@ -25,5 +25,6 @@ export class UserService {
       passwordHash: passwordHash,
     });
     await this.userRepository.save(user);
+    return user;
   }
 }

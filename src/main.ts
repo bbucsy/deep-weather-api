@@ -9,11 +9,13 @@ import {
 } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
 
   app.use(
     session({
-      secret: 'super-secret',
+      secret: process.env.SESSION_SECRET || 'secret',
     }),
   );
 
@@ -24,6 +26,8 @@ async function bootstrap() {
     .addTag('city')
     .addTag('predictions')
     .addTag('neural-model')
+    .addTag('auth')
+    .addBearerAuth()
     .build();
 
   const options: SwaggerDocumentOptions = {

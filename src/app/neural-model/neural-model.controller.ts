@@ -9,15 +9,18 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { Queue } from 'bull';
+import { RequiredRole } from '../auth/role.guard';
 import { CityService } from '../city/city.service';
+import { Role } from '../user/user-role.enum';
 import { CreateModelDto } from './dto/create-model.dto';
 import { NeuralModelDto, NeuralModelListDto } from './dto/neural-model.dto';
 import { NeuralModel } from './neural-model.entity';
 import { NeuralModelService } from './neural-model.service';
 
 @ApiTags('neural-model')
+@ApiBearerAuth()
 @Controller('neural-model')
 export class NeuralModelController {
   constructor(
@@ -31,6 +34,7 @@ export class NeuralModelController {
   /**
    * Cretes a new Neural model, and starts a Pre-Train job with a set of training data.
    */
+  @RequiredRole(Role.Admin)
   @Post()
   async createModel(@Body() dto: CreateModelDto) {
     this.logger.debug(dto);
@@ -53,6 +57,7 @@ export class NeuralModelController {
   }
 
   /** Forcefully  starts a prediction background job (Normally started by cron)*/
+  @RequiredRole(Role.Admin)
   @Post('predict')
   @HttpCode(200)
   async predict() {
@@ -60,6 +65,7 @@ export class NeuralModelController {
   }
 
   /** Forcefully  starts a Re-Train background job (Normally started by cron)*/
+  @RequiredRole(Role.Admin)
   @Post('retrain')
   @HttpCode(200)
   async retrain() {

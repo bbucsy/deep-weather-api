@@ -7,8 +7,10 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RequiredRole } from '../auth/role.guard';
 import { CityService } from '../city/city.service';
+import { Role } from '../user/user-role.enum';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { PredictionListDto } from './dto/prediction-list.dto';
 import { ResponseListDto } from './dto/response-list.dto';
@@ -17,6 +19,7 @@ import { Prediction } from './prediction.entity';
 import { PredictionService } from './prediction.service';
 
 @ApiTags('predictions')
+@ApiBearerAuth()
 @Controller('predictions')
 export class PredictionController {
   constructor(
@@ -28,10 +31,10 @@ export class PredictionController {
   /**
    * Gets all user responses to weather predictions
    */
+  @RequiredRole(Role.Admin)
   @Get('responses')
   async responses(): Promise<ResponseListDto[]> {
     const responses = await this.predictionService.findAllResponsesWithModels();
-    this.logger.debug(JSON.stringify(responses));
     return responses.map(this.responseToListDto);
   }
 

@@ -1,10 +1,13 @@
 import { Controller, Get, Redirect } from '@nestjs/common';
+import { RequiredRole } from './app/auth/role.guard';
+import { Role } from './app/user/user-role.enum';
 
 @Controller()
 export class AppController {
   @Get()
-  @Redirect('/api-json')
+  @RequiredRole(Role.Guest)
+  @Redirect('/api')
   index() {
-    //redirect to index
+    //redirect to api
   }
 }

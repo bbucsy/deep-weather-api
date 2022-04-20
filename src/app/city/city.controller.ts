@@ -11,17 +11,21 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RequiredRole } from '../auth/role.guard';
+import { Role } from '../user/user-role.enum';
 import { City } from './city.entity';
 import { CityService } from './city.service';
 import { CityDto } from './dto/city.dto';
 import { CreateCityDto } from './dto/create-city.dto';
 
 @ApiTags('city')
+@ApiBearerAuth()
 @Controller('city')
 export class CityController {
   constructor(private readonly cityService: CityService) {}
@@ -31,6 +35,7 @@ export class CityController {
    *
    * Creates a new city
    */
+  @RequiredRole(Role.Admin)
   @Post()
   async create(@Body() createCityDto: CreateCityDto) {
     const city = await this.cityService.create(createCityDto);
@@ -58,6 +63,7 @@ export class CityController {
   }
 
   /** Deletes a specific city */
+  @RequiredRole(Role.Admin)
   @Delete(':id')
   @ApiOkResponse({ description: 'City with specified ID is deleted' })
   @ApiResponse({ status: 204, description: 'No city found with this id' })
