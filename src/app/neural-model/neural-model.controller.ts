@@ -11,7 +11,9 @@ import {
 } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { Queue } from 'bull';
+import { RequiredRole } from '../auth/role.guard';
 import { CityService } from '../city/city.service';
+import { Role } from '../user/user-role.enum';
 import { CreateModelDto } from './dto/create-model.dto';
 import { NeuralModelDto, NeuralModelListDto } from './dto/neural-model.dto';
 import { NeuralModel } from './neural-model.entity';
@@ -46,6 +48,7 @@ export class NeuralModelController {
    *
    * Finds all neural models
    */
+  @RequiredRole(Role.Admin)
   @Get()
   async findAllModels(): Promise<NeuralModelListDto[]> {
     const models = await this.modelService.findAll();

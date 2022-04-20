@@ -11,6 +11,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './app/task/task.module';
 import { AuthModule } from './app/auth/auth.module';
 import { AppController } from './app.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './app/auth/jwt.guard';
+import { RBACGuard } from './app/auth/rbac.guard';
 
 @Module({
   imports: [
@@ -33,6 +36,15 @@ import { AppController } from './app.controller';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RBACGuard,
+    },
+  ],
 })
 export class AppModule {}
