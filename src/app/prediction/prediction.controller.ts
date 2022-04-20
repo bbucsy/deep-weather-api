@@ -8,7 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RequiredRole } from '../auth/role.guard';
 import { CityService } from '../city/city.service';
+import { Role } from '../user/user-role.enum';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { PredictionListDto } from './dto/prediction-list.dto';
 import { ResponseListDto } from './dto/response-list.dto';
