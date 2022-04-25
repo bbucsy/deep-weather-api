@@ -6,3 +6,7 @@ export class LoginDto {
 export class LoginResponseDto {
   access_token: string;
 }
+
+export class OauthTokenDto {
+  token: string;
+}

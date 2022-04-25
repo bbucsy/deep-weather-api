@@ -16,6 +16,12 @@ export class User {
   passwordHash: string;
 
   @Column({
+    type: 'boolean',
+    default: false,
+  })
+  github: boolean;
+
+  @Column({
     default: Role.User,
     nullable: false,
   })
