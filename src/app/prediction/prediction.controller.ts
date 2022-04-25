@@ -52,6 +52,7 @@ export class PredictionController {
    * Only those predictions will show up, that are in the time window of the time of calling the endpoint
    * @param city_id The id of the city
    */
+  @RequiredRole(Role.Guest)
   @Get('city/:city_id')
   async currentPredictionsOfCity(
     @Param('city_id') city_id: number,
@@ -76,6 +77,7 @@ export class PredictionController {
    * Returns all predictions, that are in the current time window
    */
   @Get()
+  @RequiredRole(Role.Guest)
   async currentPredictions(): Promise<PredictionListDto[]> {
     const now = Date.now();
     const predictions =

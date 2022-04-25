@@ -13,7 +13,7 @@ services:
     env_file:
       - .env
     volumes:
-      - models_folder:/home/node
+      - models_folder:/home/node/models
     ports:
       - '3000:3000'
     networks:

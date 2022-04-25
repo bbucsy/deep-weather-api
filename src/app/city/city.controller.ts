@@ -46,6 +46,7 @@ export class CityController {
   }
 
   /** Returns all cities */
+  @RequiredRole(Role.Guest)
   @Get()
   @ApiOkResponse({ type: [CityDto] })
   async findAll(): Promise<CityDto[]> {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { City } from './city.entity';
@@ -33,8 +33,17 @@ export class CityService {
   }
 
   async remove(id: number): Promise<City> {
-    const city = await this.cityRepository.findOne(id);
-    if (typeof city !== 'undefined') this.cityRepository.remove(city);
-    return city;
+    try {
+      const city = await this.cityRepository.findOne(id);
+      if (typeof city !== 'undefined') return this.cityRepository.remove(city);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'There are active models on this city. Cannot delete',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
