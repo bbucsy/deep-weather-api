@@ -14,6 +14,7 @@ services:
       - .env
     volumes:
       - models_folder:/home/node/models
+      - db_folder:/home/node/db
     ports:
       - '3000:3000'
     networks:
@@ -28,3 +29,6 @@ volumes:
   models_folder:
     external:
       name: models_folder
+  db_folder:
+    external:
+      name: db_folder

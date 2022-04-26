@@ -30,6 +30,7 @@ RUN yarn install --production
 
 COPY --from=appbuild --chown=node:node /build/dist ./dist
 COPY --from=appbuild --chown=node:node /build/models ./models
+COPY --from=appbuild --chown=node:node /build/db ./db
 
 USER node
 CMD ["node", "dist/main.js"]

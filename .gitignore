@@ -4,6 +4,8 @@
 .env
 dev.db
 
+db/*.db
+
 # Logs
 logs
 *.log

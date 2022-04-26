@@ -7,3 +7,4 @@
 /node_modules
 models/**/*.json
 models/**/*.bin
+db/*.db
