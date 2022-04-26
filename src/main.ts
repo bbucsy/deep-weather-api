@@ -9,9 +9,16 @@ import {
 } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.enableCors({
+    origin: (process.env.CORS_ORIGIN ?? '').split(','),
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
+
+  console.log((process.env.CORS_ORIGIN ?? '*').split(','));
 
   app.use(
     session({

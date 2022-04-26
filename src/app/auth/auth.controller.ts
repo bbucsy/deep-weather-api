@@ -38,12 +38,12 @@ export class AuthController {
   @Post('oauth')
   @RequiredRole(Role.Guest)
   async OauthTokenExchange(
-    @Body() token: OauthTokenDto,
+    @Body() body: OauthTokenDto,
   ): Promise<LoginResponseDto> {
     const autoAdmin = (process.env.AUTO_ADMIN || '').split(',');
     this.logger.log(autoAdmin);
 
-    const gh_user = await this.authService.getGithubProfile(token.token);
+    const gh_user = await this.authService.getGithubProfile(body.token);
     let user = await this.userService.findOne(gh_user.name);
 
     const admin = autoAdmin.indexOf(gh_user.login) !== -1;
