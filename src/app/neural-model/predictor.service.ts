@@ -77,7 +77,9 @@ export class PredictorServicve {
     const data: TrainingDataEntry[] = await Promise.all(
       predictions.map(async (p) => {
         const input = JSON.parse(p.input) as number[][];
-        const user_label = await this.predictionService.getActualWeather(p);
+        const user_label = await this.predictionService.getUserResponseWeather(
+          p,
+        );
         const entry: TrainingDataEntry = {
           x: input,
           y: user_label,

@@ -5,6 +5,8 @@ import { Prediction } from './prediction.entity';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { PredictionResponse } from './prediction-response.entity';
 import { CreatePredictionResponseDto } from './dto/create-prediction-response.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class PredictionService {
@@ -13,6 +15,7 @@ export class PredictionService {
     private readonly predictionRepository: Repository<Prediction>,
     @InjectRepository(PredictionResponse)
     private readonly responseRepository: Repository<PredictionResponse>,
+    @InjectQueue('predictor') private readonly predcitorQueue: Queue,
   ) {}
 
   private logger = new Logger(PredictionService.name);
@@ -79,7 +82,7 @@ export class PredictionService {
     return await this.responseRepository.save(response);
   }
 
-  async getActualWeather(prediction: Prediction): Promise<number> {
+  async getUserResponseWeather(prediction: Prediction): Promise<number> {
     const query = await this.responseRepository
       .createQueryBuilder('response')
       .select('response.response', 'label')
@@ -93,5 +96,9 @@ export class PredictionService {
 
     const result: { label: number; numRes: number } = await query.getRawOne();
     return result?.label || prediction.result;
+  }
+
+  async startAutoRespondJob() {
+    await this.predcitorQueue.add('auto-respond');
   }
 }
