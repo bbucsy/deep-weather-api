@@ -10,7 +10,12 @@ import {
 
 import { Role } from '../user/user-role.enum';
 import { UserService } from '../user/user.service';
-import { LoginDto, LoginResponseDto, OauthTokenDto } from './dto/auth.dto';
+import {
+  LoginDto,
+  LoginResponseDto,
+  OauthTokenDto,
+  RegisterDto,
+} from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { RequiredRole } from './role.guard';
 import { TYPOERM_ERROR_CODE } from 'src/utils/constants';
@@ -29,7 +34,7 @@ export class AuthController {
   @RequiredRole(Role.Guest)
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
-    const user = await this.authService.validateUser(loginDto);
+    const user = await this.authService.validateSimpleUserLogin(loginDto);
     if (user == null) throw new UnauthorizedException();
 
     return await this.authService.generateToken(user);
@@ -44,22 +49,34 @@ export class AuthController {
     this.logger.log(autoAdmin);
 
     const gh_user = await this.authService.getGithubProfile(body.token);
-    let user = await this.userService.findOne(gh_user.name);
+    let user = await this.userService.findOne(gh_user.login);
 
     const admin = autoAdmin.indexOf(gh_user.login) !== -1;
 
     if (user == null) {
-      user = await this.userService.create(gh_user.name, '*', true, admin);
+      user = await this.userService.create(
+        gh_user.login,
+        gh_user.name,
+        '*',
+        true,
+        admin,
+      );
     }
+
+    if (admin && user.role != Role.Admin) user.role = Role.Admin;
 
     return await this.authService.generateToken(user);
   }
 
   @RequiredRole(Role.Guest)
   @Post('register')
-  async register(@Body() body: LoginDto): Promise<LoginResponseDto> {
+  async register(@Body() body: RegisterDto): Promise<LoginResponseDto> {
     try {
-      const user = await this.userService.create(body.username, body.password);
+      const user = await this.userService.create(
+        body.email,
+        body.username,
+        body.password,
+      );
       return await this.authService.generateToken(user);
     } catch (error) {
       if (error?.errno == TYPOERM_ERROR_CODE.UniqueViolation)

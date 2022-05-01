@@ -20,8 +20,8 @@ export class AuthService {
 
   private readonly logger = new Logger(AuthService.name);
 
-  async validateUser(loginDto: LoginDto): Promise<User> {
-    const user = await this.userService.findOne(loginDto.username);
+  async validateSimpleUserLogin(loginDto: LoginDto): Promise<User> {
+    const user = await this.userService.findOne(loginDto.email);
     if (
       user &&
       bcrypt.compareSync(loginDto.password, user.passwordHash) &&
