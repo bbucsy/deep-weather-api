@@ -102,6 +102,7 @@ export class PredictionService {
 
   async getPredictionsWithResponses(
     model_id: number,
+    with_input = false,
   ): Promise<PredictionWithResponse[]> {
     const query = this.connection
       .createQueryBuilder()
@@ -139,6 +140,8 @@ export class PredictionService {
         't_all.pid = t_max.pid and t_all.count = t_max.max',
       )
       .innerJoin('prediction', 'p', 'p.id = t_all.pid');
+
+    if (with_input) query.addSelect('p.input', 'input');
 
     this.logger.debug(query.getSql());
 

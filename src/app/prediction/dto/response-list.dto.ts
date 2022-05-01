@@ -15,6 +15,7 @@ export class ResponseListDto {
 }
 
 export interface PredictionWithResponse {
+  input?: string;
   prediction_id: number;
   user_response: number;
   prediction_result: number;
