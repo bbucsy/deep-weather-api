@@ -13,3 +13,9 @@ export class ResponseListDto {
   /** The response the user submitted */
   userResponse: number;
 }
+
+export interface PredictionWithResponse {
+  prediction_id: number;
+  user_response: number;
+  prediction_result: number;
+}

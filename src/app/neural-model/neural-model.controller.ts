@@ -80,7 +80,10 @@ export class NeuralModelController {
   async findOne(@Param('id') id: string): Promise<NeuralModelDto> {
     const model = await this.modelService.findOne(+id, true);
     if (typeof model === 'undefined') throw new NotFoundException();
-    return this.ModelToDto(model);
+    const dto = this.ModelToDto(model);
+    dto.accuracy = await this.modelService.getActualAccuracy(model.id);
+
+    return dto;
   }
 
   private ModelToDto(model: NeuralModel): NeuralModelDto {

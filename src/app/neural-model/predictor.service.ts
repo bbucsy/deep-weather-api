@@ -88,6 +88,7 @@ export class PredictorServicve {
       }),
     );
 
+    this.logger.debug(`Training entry number: ${data.length}`);
     const info = await predictor.train(prepareDataSet(data), 1);
 
     // set model status to "active"
