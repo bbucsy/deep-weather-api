@@ -1,18 +1,23 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { Connection, MoreThan, Repository } from 'typeorm';
 import { Prediction } from './prediction.entity';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { PredictionResponse } from './prediction-response.entity';
 import { CreatePredictionResponseDto } from './dto/create-prediction-response.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { PredictionWithResponse } from './dto/response-list.dto';
 
 @Injectable()
 export class PredictionService {
   constructor(
+    private connection: Connection,
     @InjectRepository(Prediction)
     private readonly predictionRepository: Repository<Prediction>,
     @InjectRepository(PredictionResponse)
     private readonly responseRepository: Repository<PredictionResponse>,
+    @InjectQueue('predictor') private readonly predictorQueue: Queue,
   ) {}
 
   private logger = new Logger(PredictionService.name);
@@ -79,7 +84,7 @@ export class PredictionService {
     return await this.responseRepository.save(response);
   }
 
-  async getActualWeather(prediction: Prediction): Promise<number> {
+  async getUserResponseWeather(prediction: Prediction): Promise<number> {
     const query = await this.responseRepository
       .createQueryBuilder('response')
       .select('response.response', 'label')
@@ -93,5 +98,57 @@ export class PredictionService {
 
     const result: { label: number; numRes: number } = await query.getRawOne();
     return result?.label || prediction.result;
+  }
+
+  async getPredictionsWithResponses(
+    model_id: number,
+    with_input = false,
+  ): Promise<PredictionWithResponse[]> {
+    const query = this.connection
+      .createQueryBuilder()
+      .select('t_all.pid', 'prediction_id')
+      .addSelect('t_all.response', 'user_response')
+      .addSelect('p.result', 'prediction_result')
+      .from((subQuery) => {
+        return subQuery
+          .select('sq2.pid', 'pid')
+          .addSelect('max(sq2.count)', 'max')
+          .from((subQuery2) => {
+            return subQuery2
+              .select('p.id', 'pid')
+              .addSelect('pr.response', 'response')
+              .addSelect('count(pr.response)', 'count')
+              .from('prediction', 'p')
+              .innerJoin('prediction_response', 'pr', 'p.id = pr.predictionId')
+              .where('p.modelId = :modelId', { modelId: model_id })
+              .groupBy('pid')
+              .addGroupBy('response');
+          }, 'sq2')
+          .groupBy('sq2.pid');
+      }, 't_max')
+      .innerJoin(
+        (subQuery) => {
+          return subQuery
+            .select('pr.predictionId', 'pid')
+            .addSelect('pr.response', 'response')
+            .addSelect('count(pr.response)', 'count')
+            .from('prediction_response', 'pr')
+            .groupBy('pid')
+            .addGroupBy('response');
+        },
+        't_all',
+        't_all.pid = t_max.pid and t_all.count = t_max.max',
+      )
+      .innerJoin('prediction', 'p', 'p.id = t_all.pid');
+
+    if (with_input) query.addSelect('p.input', 'input');
+
+    this.logger.debug(query.getSql());
+
+    return await query.getRawMany();
+  }
+
+  async startAutoRespondJob() {
+    await this.predictorQueue.add('auto-respond');
   }
 }

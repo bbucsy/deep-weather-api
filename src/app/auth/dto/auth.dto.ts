@@ -1,6 +1,10 @@
 export class LoginDto {
-  username: string;
+  email: string;
   password: string;
+}
+
+export class RegisterDto extends LoginDto {
+  username: string;
 }
 
 export class LoginResponseDto {

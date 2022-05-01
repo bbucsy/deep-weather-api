@@ -7,12 +7,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateModelDto } from './dto/create-model.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { PredictionService } from '../prediction/prediction.service';
 
 @Injectable()
 export class NeuralModelService {
   constructor(
     @InjectRepository(NeuralModel)
     private readonly modelRepository: Repository<NeuralModel>,
+    private readonly predictionServe: PredictionService,
     @InjectQueue('neural-model') private readonly neuralQueue: Queue,
   ) {}
 
@@ -49,6 +51,14 @@ export class NeuralModelService {
       where: { status: status },
       relations: ['city'],
     });
+  }
+
+  async getActualAccuracy(model_id: number): Promise<number> {
+    const preds = await this.predictionServe.getPredictionsWithResponses(
+      model_id,
+    );
+    const good = preds.filter((p) => p.user_response == p.prediction_result);
+    return good.length / preds.length;
   }
 
   async setErrorState(id: number) {

@@ -13,3 +13,10 @@ export class ResponseListDto {
   /** The response the user submitted */
   userResponse: number;
 }
+
+export interface PredictionWithResponse {
+  input?: string;
+  prediction_id: number;
+  user_response: number;
+  prediction_result: number;
+}

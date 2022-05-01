@@ -11,14 +11,15 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async findOne(username: string): Promise<User> {
+  async findOne(email: string): Promise<User> {
     const user = await this.userRepository.find({
-      where: { name: username },
+      where: { email: email },
     });
     return typeof user === 'undefined' ? undefined : user[0];
   }
 
   async create(
+    email: string,
     username: string,
     password: string,
     github = false,
@@ -27,6 +28,7 @@ export class UserService {
     const salt = bcrypt.genSaltSync();
     const passwordHash = await bcrypt.hash(password, salt);
     const user = this.userRepository.create({
+      email: email,
       name: username,
       github: github,
       passwordHash: passwordHash,

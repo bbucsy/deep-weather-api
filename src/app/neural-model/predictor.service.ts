@@ -69,23 +69,26 @@ export class PredictorServicve {
   async retrainModel(model: NeuralModel): Promise<number> {
     const predictor = await model.loadOrCreatePredictor();
 
+    const predictions =
+      await this.predictionService.getPredictionsWithResponses(model.id, true);
+
+    const data: TrainingDataEntry[] = predictions
+      .map((p) => {
+        if (typeof p.input === undefined) return null;
+        const input = JSON.parse(p.input) as number[][];
+        return {
+          x: input,
+          y: p.user_response,
+        };
+      })
+      .filter((tde) => tde != null);
+
+    if (!data || data.length == 0) return 0;
+
     model.status = 0;
     await this.modelRepository.save(model);
 
-    const predictions = await this.predictionService.findByModel(model.id);
-
-    const data: TrainingDataEntry[] = await Promise.all(
-      predictions.map(async (p) => {
-        const input = JSON.parse(p.input) as number[][];
-        const user_label = await this.predictionService.getActualWeather(p);
-        const entry: TrainingDataEntry = {
-          x: input,
-          y: user_label,
-        };
-        return entry;
-      }),
-    );
-
+    this.logger.debug(`Training entry number: ${data.length}`);
     const info = await predictor.train(prepareDataSet(data), 1);
 
     // set model status to "active"

@@ -65,7 +65,7 @@ export class PredictionController {
     const predictions = await this.predictionService.findByCity(city_id, now);
 
     const dtos = predictions.map(async (p) => {
-      const userLabel = await this.predictionService.getActualWeather(p);
+      const userLabel = await this.predictionService.getUserResponseWeather(p);
       return this.predictionToListDto(p, userLabel);
     });
 
@@ -84,7 +84,7 @@ export class PredictionController {
       await this.predictionService.findAllPredictionsWithModelsAndCity(now);
 
     const dtos = predictions.map(async (p) => {
-      const userLabel = await this.predictionService.getActualWeather(p);
+      const userLabel = await this.predictionService.getUserResponseWeather(p);
       return this.predictionToListDto(p, userLabel);
     });
 

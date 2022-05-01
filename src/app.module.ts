@@ -14,6 +14,7 @@ import { AppController } from './app.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './app/auth/jwt.guard';
 import { RBACGuard } from './app/auth/rbac.guard';
+import { ApiKeyAuthGuard } from './app/auth/apikey.strategy';
 
 @Module({
   imports: [
@@ -37,6 +38,10 @@ import { RBACGuard } from './app/auth/rbac.guard';
   ],
   controllers: [AppController],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

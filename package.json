@@ -42,6 +42,7 @@
     "bull": "4.7.0",
     "express-session": "^1.17.2",
     "passport": "^0.5.2",
+    "passport-headerapikey": "^1.2.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "reflect-metadata": "0.1.13",
