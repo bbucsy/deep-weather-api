@@ -9,7 +9,7 @@ export class NeuralModelDto {
 
   lstm_count: number;
 
-  accuracy: number;
+  accuracy?: number;
 
   status: number;
 

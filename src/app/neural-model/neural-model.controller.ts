@@ -81,9 +81,14 @@ export class NeuralModelController {
     const model = await this.modelService.findOne(+id, true);
     if (typeof model === 'undefined') throw new NotFoundException();
     const dto = this.ModelToDto(model);
-    dto.accuracy = await this.modelService.getActualAccuracy(model.id);
-
+    dto.accuracy = await this.modelService.getAccuracySinceLastTrain(model.id);
     return dto;
+  }
+
+  @Get(':id/accuracy')
+  async overallAccuracy(@Param('id') id: string): Promise<number | undefined> {
+    const acc = await this.modelService.getActualAccuracy(+id);
+    return isNaN(acc) ? undefined : acc;
   }
 
   private ModelToDto(model: NeuralModel): NeuralModelDto {
@@ -94,7 +99,6 @@ export class NeuralModelController {
         id: model.city.id,
         name: model.city.name,
       },
-      accuracy: model.accuracy,
       status: model.status,
       epochs: model.epochs,
       hiddenLayerCount: model.hiddenLayerCount,

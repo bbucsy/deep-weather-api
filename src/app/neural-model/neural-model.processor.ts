@@ -25,9 +25,7 @@ export class NeuralModelProcessor {
 
     // Start pretraining the model
     const info = await this.predictorService.pretrainModel(model);
-
-    // Set accuracy from training result
-    this.modelService.setAccuracy(modelId, info[info.length - 1]);
+    this.logger.debug(info);
     this.logger.log('Model training done');
   }
 
@@ -62,9 +60,7 @@ export class NeuralModelProcessor {
 
     // Start pretraining the model
     const info = await this.predictorService.retrainModel(model);
-
-    // Set accuracy from training result
-    this.modelService.setAccuracy(modelId, info);
+    this.logger.debug(info);
     this.logger.log('Model RE; train done');
   }
 

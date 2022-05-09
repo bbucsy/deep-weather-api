@@ -91,6 +91,8 @@ export class PredictorServicve {
     this.logger.debug(`Training entry number: ${data.length}`);
     const info = await predictor.train(prepareDataSet(data), 1);
 
+    const responseIds = predictions.map((p) => p.prediction_id);
+    await this.predictionService.setUsedBulk(responseIds, true);
     // set model status to "active"
     model.status = 1;
     await this.modelRepository.save(model);

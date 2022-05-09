@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, MoreThan, Repository } from 'typeorm';
+import { Connection, In, MoreThan, Repository } from 'typeorm';
 import { Prediction } from './prediction.entity';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { PredictionResponse } from './prediction-response.entity';
@@ -103,6 +103,7 @@ export class PredictionService {
   async getPredictionsWithResponses(
     model_id: number,
     with_input = false,
+    only_unused = false,
   ): Promise<PredictionWithResponse[]> {
     const query = this.connection
       .createQueryBuilder()
@@ -142,10 +143,21 @@ export class PredictionService {
       .innerJoin('prediction', 'p', 'p.id = t_all.pid');
 
     if (with_input) query.addSelect('p.input', 'input');
+    if (only_unused) query.where('p.used_in_trining = false');
 
     this.logger.debug(query.getSql());
 
     return await query.getRawMany();
+  }
+
+  async setUsedBulk(predictionIds: number[], usedState: boolean) {
+    const query = this.predictionRepository
+      .createQueryBuilder()
+      .update(Prediction)
+      .set({ usedInTraining: usedState })
+      .where({ id: In(predictionIds) });
+
+    await query.execute();
   }
 
   async startAutoRespondJob() {
