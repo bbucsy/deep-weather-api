@@ -17,6 +17,7 @@ lerna-debug.log*
 
 /models/**/*.json
 /models/**/*.bin
+**/*/training_data.json
 
 # OS
 .DS_Store
