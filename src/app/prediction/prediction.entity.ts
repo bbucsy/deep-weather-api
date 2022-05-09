@@ -22,6 +22,9 @@ export class Prediction {
   @Column({ name: 'prediction_time', default: 0 })
   predictionTime: number;
 
+  @Column({ type: 'boolean', name: 'used_in_trining', default: false })
+  usedInTraining: boolean;
+
   @ManyToOne(() => NeuralModel, (model) => model.predictions)
   model: NeuralModel;
 

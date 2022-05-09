@@ -15,7 +15,11 @@ import { RequiredRole } from '../auth/role.guard';
 import { CityService } from '../city/city.service';
 import { Role } from '../user/user-role.enum';
 import { CreateModelDto } from './dto/create-model.dto';
-import { NeuralModelDto, NeuralModelListDto } from './dto/neural-model.dto';
+import {
+  NeuralModelAccuracyDto,
+  NeuralModelDto,
+  NeuralModelListDto,
+} from './dto/neural-model.dto';
 import { NeuralModel } from './neural-model.entity';
 import { NeuralModelService } from './neural-model.service';
 
@@ -81,9 +85,15 @@ export class NeuralModelController {
     const model = await this.modelService.findOne(+id, true);
     if (typeof model === 'undefined') throw new NotFoundException();
     const dto = this.ModelToDto(model);
-    dto.accuracy = await this.modelService.getActualAccuracy(model.id);
-
+    dto.accuracy = await this.modelService.getAccuracySinceLastTrain(model.id);
     return dto;
+  }
+
+  @Get(':id/accuracy')
+  async overallAccuracy(
+    @Param('id') id: string,
+  ): Promise<NeuralModelAccuracyDto> {
+    return { accuracy: await this.modelService.getActualAccuracy(+id) };
   }
 
   private ModelToDto(model: NeuralModel): NeuralModelDto {
@@ -94,7 +104,6 @@ export class NeuralModelController {
         id: model.city.id,
         name: model.city.name,
       },
-      accuracy: model.accuracy,
       status: model.status,
       epochs: model.epochs,
       hiddenLayerCount: model.hiddenLayerCount,

@@ -28,10 +28,6 @@ export class NeuralModel {
 
   @Column('int')
   lstm_count: number;
-
-  @Column({ type: 'float', default: 0.0 })
-  accuracy: number;
-
   // 0-> created 1-> trained 2+-> error
   @Column({ type: 'int', default: 0 })
   status: number;

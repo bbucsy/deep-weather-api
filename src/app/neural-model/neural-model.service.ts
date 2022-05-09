@@ -53,10 +53,22 @@ export class NeuralModelService {
     });
   }
 
-  async getActualAccuracy(model_id: number): Promise<number> {
+  async getActualAccuracy(model_id: number): Promise<number | undefined> {
     const preds = await this.predictionServe.getPredictionsWithResponses(
       model_id,
     );
+    if (preds.length === 0) return undefined;
+    const good = preds.filter((p) => p.user_response == p.prediction_result);
+    return good.length / preds.length;
+  }
+
+  async getAccuracySinceLastTrain(model_id: number): Promise<number> {
+    const preds = await this.predictionServe.getPredictionsWithResponses(
+      model_id,
+      false,
+      true,
+    );
+    if (preds.length === 0) return undefined;
     const good = preds.filter((p) => p.user_response == p.prediction_result);
     return good.length / preds.length;
   }
@@ -64,12 +76,6 @@ export class NeuralModelService {
   async setErrorState(id: number) {
     const model = await this.modelRepository.findOneOrFail(id);
     model.status = 2;
-    this.modelRepository.save(model);
-  }
-
-  async setAccuracy(id: number, acc: number) {
-    const model = await this.modelRepository.findOneOrFail(id);
-    model.accuracy = acc;
     this.modelRepository.save(model);
   }
 
