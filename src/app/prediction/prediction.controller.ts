@@ -13,7 +13,10 @@ import { CityService } from '../city/city.service';
 import { Role } from '../user/user-role.enum';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { PredictionListDto } from './dto/prediction-list.dto';
-import { ResponseListDto } from './dto/response-list.dto';
+import {
+  ResponseListDto,
+  ResponseStatisticsDto,
+} from './dto/response-list.dto';
 import { PredictionResponse } from './prediction-response.entity';
 import { Prediction } from './prediction.entity';
 import { PredictionService } from './prediction.service';
@@ -38,6 +41,15 @@ export class PredictionController {
     return responses.map(this.responseToListDto);
   }
 
+  /**
+   * Gets statistical data about the responses
+   * @returns number of responses, and the number of responses saying the prediction is correct
+   */
+  @RequiredRole(Role.Admin)
+  @Get('responses/statistics')
+  async getResponseStatistics(): Promise<ResponseStatisticsDto> {
+    return await this.predictionService.getResponseStatistics();
+  }
   /**
    * Creates a user response to a specified prediction
    * @param createResponseDto

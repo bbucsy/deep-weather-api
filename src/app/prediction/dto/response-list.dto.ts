@@ -20,3 +20,8 @@ export interface PredictionWithResponse {
   user_response: number;
   prediction_result: number;
 }
+
+export class ResponseStatisticsDto {
+  numResponses: number;
+  numGood: number;
+}

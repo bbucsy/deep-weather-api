@@ -7,7 +7,10 @@ import { PredictionResponse } from './prediction-response.entity';
 import { CreatePredictionResponseDto } from './dto/create-prediction-response.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { PredictionWithResponse } from './dto/response-list.dto';
+import {
+  PredictionWithResponse,
+  ResponseStatisticsDto,
+} from './dto/response-list.dto';
 
 @Injectable()
 export class PredictionService {
@@ -51,10 +54,30 @@ export class PredictionService {
     return this.predictionRepository.save(prediction);
   }
 
-  async findAllResponsesWithModels() {
+  async findAllResponsesWithModels(): Promise<PredictionResponse[]> {
     return this.responseRepository.find({
       relations: ['prediction', 'prediction.model'],
+      order: { created_at: 'DESC' },
+      take: 100,
     });
+  }
+
+  async getResponseStatistics(): Promise<ResponseStatisticsDto> {
+    const all = await this.responseRepository.count();
+    const query = this.connection
+      .createQueryBuilder()
+      .select('COUNT(*)', 'count')
+      .from(PredictionResponse, 'res')
+      .innerJoin(Prediction, 'prediction', 'res.predictionId = prediction.id')
+      .where('res.response = prediction.result');
+
+    const good = await query.getRawOne<{ count: number }>();
+
+    this.logger.debug(query.getSql());
+    return {
+      numGood: good.count,
+      numResponses: all,
+    };
   }
 
   async findByCity(city_id: number, minTime = 0): Promise<Prediction[]> {
