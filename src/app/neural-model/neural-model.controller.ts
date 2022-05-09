@@ -15,7 +15,11 @@ import { RequiredRole } from '../auth/role.guard';
 import { CityService } from '../city/city.service';
 import { Role } from '../user/user-role.enum';
 import { CreateModelDto } from './dto/create-model.dto';
-import { NeuralModelDto, NeuralModelListDto } from './dto/neural-model.dto';
+import {
+  NeuralModelAccuracyDto,
+  NeuralModelDto,
+  NeuralModelListDto,
+} from './dto/neural-model.dto';
 import { NeuralModel } from './neural-model.entity';
 import { NeuralModelService } from './neural-model.service';
 
@@ -86,9 +90,10 @@ export class NeuralModelController {
   }
 
   @Get(':id/accuracy')
-  async overallAccuracy(@Param('id') id: string): Promise<number | undefined> {
-    const acc = await this.modelService.getActualAccuracy(+id);
-    return isNaN(acc) ? undefined : acc;
+  async overallAccuracy(
+    @Param('id') id: string,
+  ): Promise<NeuralModelAccuracyDto> {
+    return { accuracy: await this.modelService.getActualAccuracy(+id) };
   }
 
   private ModelToDto(model: NeuralModel): NeuralModelDto {

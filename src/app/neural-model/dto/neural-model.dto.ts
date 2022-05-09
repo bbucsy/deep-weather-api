@@ -28,3 +28,7 @@ export class neuralModelBase {
   id: number;
   name: string;
 }
+
+export class NeuralModelAccuracyDto {
+  accuracy?: number;
+}

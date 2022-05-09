@@ -53,10 +53,11 @@ export class NeuralModelService {
     });
   }
 
-  async getActualAccuracy(model_id: number): Promise<number> {
+  async getActualAccuracy(model_id: number): Promise<number | undefined> {
     const preds = await this.predictionServe.getPredictionsWithResponses(
       model_id,
     );
+    if (preds.length === 0) return undefined;
     const good = preds.filter((p) => p.user_response == p.prediction_result);
     return good.length / preds.length;
   }
@@ -67,6 +68,7 @@ export class NeuralModelService {
       false,
       true,
     );
+    if (preds.length === 0) return undefined;
     const good = preds.filter((p) => p.user_response == p.prediction_result);
     return good.length / preds.length;
   }
