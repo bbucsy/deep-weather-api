@@ -14,12 +14,15 @@ import {
   TrainingDataEntry,
 } from '../tensorflow/dataConvert';
 import { LAG } from 'src/utils/constants';
+import { TrainingData } from './training-data.entity';
 
 @Injectable()
 export class PredictorServicve {
   constructor(
     @InjectRepository(NeuralModel)
     private readonly modelRepository: Repository<NeuralModel>,
+    @InjectRepository(TrainingData)
+    private readonly trainingDataRepository: Repository<TrainingData>,
     private readonly predictionService: PredictionService,
     private readonly weatherService: OpenWeatherService,
   ) {}
@@ -38,11 +41,15 @@ export class PredictorServicve {
 
     const info = await predictor.train(trainingDS, model.epochs);
 
+    for (let i = 0; i < info.length; i++) {
+      await this.saveTraingingData(model, i, info[i].accuracy, info[i].loss);
+    }
+
     // set model status to "active"
     model.status = 1;
     await this.modelRepository.save(model);
 
-    return info;
+    return info.map((i) => i.accuracy);
   }
 
   async predictWeather(model: NeuralModel): Promise<Prediction> {
@@ -91,12 +98,39 @@ export class PredictorServicve {
     this.logger.debug(`Training entry number: ${data.length}`);
     const info = await predictor.train(prepareDataSet(data), 1);
 
-    const responseIds = predictions.map((p) => p.prediction_id);
-    await this.predictionService.setUsedBulk(responseIds, true);
+    const setUsedPromise = this.predictionService.setUsedBulk(
+      predictions.map((p) => p.prediction_id),
+      true,
+    );
+
+    const saveDataPromise = this.saveTraingingData(
+      model,
+      1,
+      info[0].accuracy,
+      info[0].loss,
+    );
+
+    await Promise.all([setUsedPromise, saveDataPromise]);
+
     // set model status to "active"
     model.status = 1;
     await this.modelRepository.save(model);
 
-    return info[0];
+    return info[0].accuracy;
+  }
+
+  private async saveTraingingData(
+    model: NeuralModel,
+    epoch: number,
+    accuracy: number,
+    loss: number,
+  ) {
+    const data = this.trainingDataRepository.create({
+      accuracy: accuracy,
+      epoch: epoch,
+      loss: loss,
+      model: model,
+    });
+    await this.trainingDataRepository.save(data);
   }
 }

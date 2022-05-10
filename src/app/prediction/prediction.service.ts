@@ -73,7 +73,6 @@ export class PredictionService {
 
     const good = await query.getRawOne<{ count: number }>();
 
-    this.logger.debug(query.getSql());
     return {
       numGood: good.count,
       numResponses: all,
@@ -116,8 +115,6 @@ export class PredictionService {
       .groupBy('label')
       .orderBy('numRes', 'DESC')
       .limit(1);
-
-    this.logger.debug(query.getSql());
 
     const result: { label: number; numRes: number } = await query.getRawOne();
     return result?.label || prediction.result;
@@ -167,8 +164,6 @@ export class PredictionService {
 
     if (with_input) query.addSelect('p.input', 'input');
     if (only_unused) query.where('p.used_in_trining = false');
-
-    this.logger.debug(query.getSql());
 
     return await query.getRawMany();
   }

@@ -8,12 +8,16 @@ import { CreateModelDto } from './dto/create-model.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { PredictionService } from '../prediction/prediction.service';
+import { TrainingData } from './training-data.entity';
+import { TrainingDataDto } from './dto/training-data.dto';
 
 @Injectable()
 export class NeuralModelService {
   constructor(
     @InjectRepository(NeuralModel)
     private readonly modelRepository: Repository<NeuralModel>,
+    @InjectRepository(NeuralModel)
+    private readonly trainingDataRepository: Repository<TrainingData>,
     private readonly predictionServe: PredictionService,
     @InjectQueue('neural-model') private readonly neuralQueue: Queue,
   ) {}
@@ -90,5 +94,16 @@ export class NeuralModelService {
         return this.neuralQueue.add('retrain', { modelId: m.id });
       }),
     );
+  }
+
+  async getTrainingData(id: number): Promise<TrainingDataDto[]> {
+    const model = await this.modelRepository.findOne(id, {
+      relations: ['trainingData'],
+    });
+    if (!model) return [];
+
+    return model.trainingData.map((td, idx) => {
+      return { accuracy: td.accuracy, loss: td.loss, epoch: idx };
+    });
   }
 }

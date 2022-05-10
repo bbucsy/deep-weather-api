@@ -20,6 +20,7 @@ import {
   NeuralModelDto,
   NeuralModelListDto,
 } from './dto/neural-model.dto';
+import { TrainingDataDto } from './dto/training-data.dto';
 import { NeuralModel } from './neural-model.entity';
 import { NeuralModelService } from './neural-model.service';
 
@@ -94,6 +95,11 @@ export class NeuralModelController {
     @Param('id') id: string,
   ): Promise<NeuralModelAccuracyDto> {
     return { accuracy: await this.modelService.getActualAccuracy(+id) };
+  }
+
+  @Get(':id/training-data')
+  async getTrainingData(@Param('id') id: string): Promise<TrainingDataDto[]> {
+    return await this.modelService.getTrainingData(+id);
   }
 
   private ModelToDto(model: NeuralModel): NeuralModelDto {
