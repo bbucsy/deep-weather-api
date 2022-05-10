@@ -9,10 +9,11 @@ import { NeuralModelProcessor } from './neural-model.processor';
 import { PredictionModule } from '../prediction/prediction.module';
 import { PredictorServicve } from './predictor.service';
 import { OpenWeatherModule } from '../open-weather/open-weather.module';
+import { TrainingData } from './training-data.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([NeuralModel]),
+    TypeOrmModule.forFeature([NeuralModel, TrainingData]),
     BullModule.registerQueue({
       name: 'neural-model',
     }),

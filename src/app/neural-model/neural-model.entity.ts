@@ -8,6 +8,7 @@ import {
 import { City } from '../city/city.entity';
 import { Prediction } from '../prediction/prediction.entity';
 import { TFModel } from '../tensorflow/TFModel';
+import { TrainingData } from './training-data.entity';
 
 @Entity()
 export class NeuralModel {
@@ -39,6 +40,11 @@ export class NeuralModel {
     onDelete: 'CASCADE',
   })
   predictions: Prediction[];
+
+  @OneToMany(() => TrainingData, (data) => data.model, {
+    onDelete: 'CASCADE',
+  })
+  trainingData: TrainingData[];
 
   public async loadOrCreatePredictor(): Promise<TFModel> {
     try {

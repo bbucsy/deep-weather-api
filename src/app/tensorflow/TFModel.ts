@@ -63,10 +63,18 @@ export class TFModel {
   public async train(
     trainData: tf.data.Dataset<tf.TensorContainer>,
     epochs: number,
-  ): Promise<number[]> {
+  ): Promise<{ accuracy: number; loss: number }[]> {
     const ds = trainData.shuffle(100).batch(32);
-    const info = await this.model.fitDataset(ds, { epochs: epochs });
-    return info.history.acc as number[];
+    const info = await this.model.fitDataset(ds, {
+      epochs: epochs,
+    });
+
+    return info.history.acc.map((acc, index) => {
+      return {
+        accuracy: acc as number,
+        loss: info.history.loss[index] as number,
+      };
+    });
   }
 
   public predict(input: tf.Tensor): { prediction: number; confidence: number } {
