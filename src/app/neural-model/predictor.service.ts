@@ -9,6 +9,7 @@ import {
   convertDtoToDataEntry,
   loadInitialTrainingData,
   prepareDataSet,
+  prepareDataSetWithFill,
   preparePredictionInput,
   tensorifyPredictionInput,
   TrainingDataEntry,
@@ -96,7 +97,11 @@ export class PredictorServicve {
     await this.modelRepository.save(model);
 
     this.logger.debug(`Training entry number: ${data.length}`);
-    const info = await predictor.train(prepareDataSet(data), 1);
+    const ds = prepareDataSetWithFill(data, 1344);
+    this.logger.debug(
+      `Training entry number after refill: ${(await ds.toArray()).length}`,
+    );
+    const info = await predictor.train(ds, 1);
 
     const setUsedPromise = this.predictionService.setUsedBulk(
       predictions.map((p) => p.prediction_id),

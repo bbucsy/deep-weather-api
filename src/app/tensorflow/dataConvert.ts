@@ -45,6 +45,21 @@ export const prepareDataSet = (
   return tf.data.zip({ xs, ys });
 };
 
+export const prepareDataSetWithFill = (
+  data: TrainingDataEntry[],
+  limit: number,
+): tf.data.Dataset<tf.TensorContainer> => {
+  if (data.length > limit) return prepareDataSet(data);
+  const ds = prepareDataSet(data);
+  const preTrainData = prepareDataSet(
+    loadInitialTrainingData().map(convertDtoToDataEntry),
+  );
+
+  return ds.concatenate(
+    preTrainData.shuffle(limit).take(limit - data.length + 1),
+  );
+};
+
 export const preparePredictionInput = (dto: OpenWeatherDto[]): number[][] => {
   if (dto.length !== LAG) throw 'Unexpected array lenght at data process';
   return dto.map(numifyData);
