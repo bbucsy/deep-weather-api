@@ -8,6 +8,7 @@ import {
 import { City } from '../city/city.entity';
 import { Prediction } from '../prediction/prediction.entity';
 import { TFModel } from '../tensorflow/TFModel';
+import { Predictor } from './predictor.interface';
 import { TrainingData } from './training-data.entity';
 
 @Entity()
@@ -46,7 +47,7 @@ export class NeuralModel {
   })
   trainingData: TrainingData[];
 
-  public async loadOrCreatePredictor(): Promise<TFModel> {
+  public async loadOrCreatePredictor(): Promise<Predictor> {
     try {
       return await TFModel.loadModel(this.file_path);
     } catch (error) {

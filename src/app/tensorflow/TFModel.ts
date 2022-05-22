@@ -6,20 +6,17 @@ import {
   LAG,
 } from 'src/utils/constants';
 import { max } from 'src/utils/normalization';
+import { IModelConfig, Predictor } from '../neural-model/predictor.interface';
 
-export interface TFModelConfig {
-  hiddenLayerCount: number;
-  lstmUnits: number;
-}
-
-export class TFModel {
+export class TFModel extends Predictor {
   private model: tf.LayersModel;
 
   private constructor(model: tf.LayersModel) {
+    super();
     this.model = model;
   }
 
-  private static createModel(config: TFModelConfig): tf.Sequential {
+  private static createModel(config: IModelConfig): tf.Sequential {
     const model = tf.sequential();
     model.add(
       tf.layers.lstm({
@@ -51,7 +48,7 @@ export class TFModel {
 
   public static async createAndSaveModel(
     path: string,
-    config: TFModelConfig,
+    config: IModelConfig,
   ): Promise<TFModel> {
     const model = TFModel.createModel(config);
     await model.save(path);
